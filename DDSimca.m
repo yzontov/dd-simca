@@ -22,10 +22,12 @@ classdef  DDSimca<handle
     %The distinctive feature of DD-SIMCA is possibility 
     %to introduce (calculate) the misclassification 
     %errors theoretically.
+    %
     %SIMCA is based on the Principal Component Analysis (PCA)
     %that is applied to the target class training datamatrix.
     %For each object from the training set two distances are 
     %calculated. 
+    %
     %They are the score distance (SD) and the orthogonal 
     %distance (OD). The SD characterizes a sample position 
     %within the score space, and OD represents the distance 
@@ -33,37 +35,48 @@ classdef  DDSimca<handle
     %It was shown that the distributions of both distances 
     %are well approximated by the scaled chi-squared 
     %distribution.
+    %
     %The scaling factors and numbers of the degrees 
     %of freedom (DoF) of these distributions 
     %are considered unknown and are estimated using 
     %the distance samples obtained from the training set. 
     %Given the type I error Alpha the acceptance area 
     %may be calculated.
+    %
     %In case an alternative class is available, 
     %we project it on the PC space and calculate 
     %the SD and OD for the alternative class.
     %By using this approach, it is possible to plot 
     %every sample and the acceptance area in the 
     %coordinates of SD against OD.
+    %
     %Additional transformation (e.g. ln(1 + x/x0))
     %may be applied to the axes for better readability 
     %of the plot.
     %
+    %
     %METHODS
+    %
     %Constructor
-    %DDSobj = DDSimca(TrainingSet,numPC)
+    %
+    %[DDSobj] = DDSimca(TrainingSet,numPC)
+    %
     %Creates the new DDSimca object
     %Parameters: TrainingSet - matrix, numPC - number of Principal
     %Components
     %
-    %handle = AcceptancePlot()
+    %
+    %[handle] = AcceptancePlot()
+    %
     %The Acceptance plot provides a graphical representation of the
     %decision area, regular samples, extremes and outliers in a
     %user-friendly manner.
     %The method has no parameters.
     %The method returns handle of the plot figure.
     %
+    %
     %[handle, N, Nplus, Nminus] = ExtremePlot()
+    %
     %The Extreme plot shows the observed vs. the expected
     %number of extreme objects and provides graphical means for
     %the data analysis.
@@ -74,53 +87,86 @@ classdef  DDSimca<handle
     %Nplus - upper boundary for N,
     %Nminus - lower boundary for N
     %
+    %
     %PROPERTIES
+    %
     %OD - vector (1,n) with normalized squared Euclidian distances for objects from Training Set
+    %
     %SD - vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
+    %
     %PointTitlesTest - names of the objects (optional)
+    %
     %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
+    %
     %OutlierObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object. 
+    %
     %TrainingSet - training set (matrix)
+    %
     %numPC - number of principal components
+    %
     %Loadings - loadings matrix
+    %
     %EigenMatrix - matrix of eigenvalues from the SVD decomposition
+    %
     %SD_mean - mean of normalized squared Mahalanobis distances (SD) for objects
     % from the Training Set
+    %
     %OD_mean - mean of normalized squared Euclidian distances (OD) for objects
     % from the Training Set
+    %
     %DoF_SD - number of Degrees of Freedom of chi-square distribution of SD
+    %
     %DoF_OD - number of Degrees of Freedom of chi-square distribution of OD
+    %
     %CriticalLevel - offset values for extreme border
+    %
     %OutlierLevel - offset values for outlier border
+    %
     %BorderType - the border type in SIMCA plot, 
     %values: 'chi-square' (default) | 'rectangle'
+    %
     %Centering - Preprocessing of the (Centering)
+    %
     %Scaling - Preprocessing (Scaling)
+    %
     %Alpha - significance level (type I error)(scalar), 
-    %must be in the range [0,1]
+    %must be in the range [0,1]. If Alpha is set to empty value [], it is
+    %calculated automatically to build a model without extreme objects.
+    %
     %Gamma - outlier level (scalar), must be in the range [0,1]
+    %
     %Transformation - transformation applied to the SD/OD on the Acceptance
     %plot, values: 'log' (default) | 'none'
+    %
     %TrainingSet_mean - mean values of the Training Set (used for preprocessing of Test Set or New Set in the DDSTask class)
+    %
     %TrainingSet_std - standard deviation of the Training Set (used for preprocessing of Test Set or New Set)
+    %
     %EstimationMethod - type of calculation of SIMCA parameters (string), values: 'classic' (default) | 'robust'; 'classic' - method of moments, 'robust' - robust methods
+    %
     %HasExtremes % extreme objects indicator
+    %
     %HasOutliers % outlier objects indicator
+    %
     %
     %USAGE EXAMPLE
     %%Let's suppose TrainingSet is the matrix 
     %%containing N spectra on M wavelengths, 
     %%which is used as Trainig Set for the model.
     %
+    %
     %numPC = 2;% number of principal components
+    %
     %
     %%create initial the DD-SIMCA model object
     %Model = DDSimca(TrainingSet, numPC);
+    %
     %
     %%tune the model parameters
     %Model.Centering = true; %apply preprocessing
     %Model.Alpha = 0.01; %indicate significance level
     %Model.Gamma = 0.001;%indicate outlier level
+    %
     %
     %draw acceptance plot
     %Model.AcceptancePlot();
@@ -130,6 +176,7 @@ classdef  DDSimca<handle
     %NewClass.AcceptancePlot();
     %NewClass.Beta
     %NewClass.Warning
+    %
     %
     %SEE ALSO DDSTask
     
@@ -156,7 +203,8 @@ classdef  DDSimca<handle
         Centering = false% Preprocessing of the (Centering)
         Scaling = false% Preprocessing (Scaling)
         
-        Alpha % significance level (type I error)(scalar), must be in the range [0,1]
+        Alpha % significance level (type I error)(scalar), must be in the range [0,1]. If Alpha is set to empty value [], it is
+    %calculated automatically to build a model without extreme objects.
         Gamma % outlier level (scalar), must be in the range [0,1]
               
         Transformation = 'log' % transformation applied to the SD/OD on the Acceptance plot, values: 'log' (default) | 'none'

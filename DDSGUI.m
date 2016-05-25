@@ -173,8 +173,7 @@ lblSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 370 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
-lblOutliers = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 330 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
 
 end
 
@@ -203,8 +202,6 @@ lblSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 370 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
-lblOutliers = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 330 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
@@ -303,17 +300,21 @@ lblHasModel = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Model c
  'Position', [160 430 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [125 416 160 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [310 416 160 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
- 'Position', [140 400 140 20], 'ForegroundColor', [255, 0, 0]/255); 
+ 'Position', [310 400 140 20], 'ForegroundColor', [255, 0, 0]/255); 
 
-lblModelSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+lblModelSamples = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 370 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
-lblModelExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+lblModelExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
-lblModelOutliers = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 320 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
+lblModelCalculatedAlpha = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 300 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
 end
 
 if(ismac)
@@ -321,10 +322,21 @@ lblHasModel = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Model c
  'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [120 406 150 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [310 406 150 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
- 'Position', [130 390 140 20], 'ForegroundColor', [255, 0, 0]/255);      
+ 'Position', [310 390 140 20], 'ForegroundColor', [255, 0, 0]/255);    
+
+lblModelSamples = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 370 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblModelExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 320 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
+lblModelCalculatedAlpha = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 300 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
 end
 
 set(f,'Visible','on');
@@ -401,6 +413,11 @@ set(lblHasTrainingOutliers,'Visible','on');
 else
 set(lblHasTrainingOutliers,'Visible','off');  
 end
+
+[n,~] = size(Model.TrainingSet);
+set(lblModelSamples,'string', sprintf('Samples: %d', n));
+set(lblModelExtremes,'string', sprintf('Extremes: %d', sum(Model.ExtremeObjects)));
+set(lblModelOutliers,'string', sprintf('Outliers: %d', sum(Model.OutlierObjects)));
     
 set(btnModelGraph,'Enable','on');
 set(btnModelGraphExtreme,'Enable','on');
@@ -485,13 +502,8 @@ end
     
 end
 
-function btnModelLoad_Callback(~, ~)
-
-tvar = uigetvariables({'Pick a DDSimca object:'}, ...
-        'ValidationFcn',{@(x) isa(x, 'DDSimca')});
-if ~isempty(tvar)  
-Model = tvar{1};
-set(btnModelBuild,'Enable','on');
+function LoadModel()
+   set(btnModelBuild,'Enable','on');
 
 %set(lblHasModel,'string','Model loaded');
 %set(lblHasModel,'Visible','on');
@@ -569,7 +581,21 @@ if ~isempty(Model.HasOutliers) && Model.HasOutliers
 set(lblHasTrainingOutliers,'Visible','on');
 else
 set(lblHasTrainingOutliers,'Visible','off');  
+end  
+
+set(lblModelSamples,'string', sprintf('Samples: %d', n));
+set(lblModelExtremes,'string', sprintf('Extremes: %d', sum(Model.ExtremeObjects)));
+set(lblModelOutliers,'string', sprintf('Outliers: %d', sum(Model.OutlierObjects)));
+
 end
+
+function btnModelLoad_Callback(~, ~)
+
+tvar = uigetvariables({'Pick a DDSimca object:'}, ...
+        'ValidationFcn',{@(x) isa(x, 'DDSimca')});
+if ~isempty(tvar)  
+Model = tvar{1};
+LoadModel();
     
 end
 end
@@ -602,6 +628,11 @@ set(chkScaling,'Value',0);
 
 set(lblWarning,'String','');
 set(lblBeta,'String','');
+
+set(lblModelSamples,'string', '');
+set(lblModelExtremes,'string', '');
+set(lblModelOutliers,'string', '');
+
 end
 
 function btnPredictBuild_Callback(~, ~)
@@ -630,6 +661,9 @@ else
         set(lblBeta,'String','');
     end
 end
+[n,~] = size(Task.NewSet);
+set(lblSamples,'string', sprintf('Samples: %d', n));
+set(lblExtremes,'string', sprintf('Extremes: %d', sum(Task.ExtremeObjects)));
 
 end
 
@@ -671,6 +705,20 @@ end
 else
     set(chkCalcBeta,'Value',0);
 end
+
+NewSet = Task.NewSet;
+[n,m]=size(NewSet);
+set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
+Model = Task.Model;
+if ~isempty(Model)
+LoadModel();
+set(btnPredictBuild,'Enable','on');
+end
+
+[n,~] = size(Task.NewSet);
+set(lblSamples,'string', sprintf('Samples: %d', n));
+set(lblExtremes,'string', sprintf('Extremes: %d', sum(Task.ExtremeObjects)));
+
 
 end
 end
@@ -718,6 +766,9 @@ Task = [];
 
 set(lblWarning,'String','');
 set(lblBeta,'String','');
+
+set(lblSamples,'string', '');
+set(lblExtremes,'string', '');
 
 
 end

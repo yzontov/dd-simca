@@ -6,30 +6,47 @@ classdef DDSTask<handle
     %and calculation of type II error Beta
     %
     %METHODS
+    %
     %Constructor
-    %DDSobj = DDSTask(Model, NewSet)
+    %
+    %[DDSobj] = DDSTask(Model, NewSet)
+    %
     %Creates the new DDSTask object
     %Parameters: Model - DDSimca object, NewSet - matrix
     %
-    %handle = AcceptancePlot()
+    %
+    %[handle] = AcceptancePlot()
+    %
     %The Acceptance plot provides a graphical representation of the
     %decision area, regular samples, extremes and outliers in a
     %user-friendly manner.
     %The method has no parameters.
     %The method returns handle of the plot figure.
     %
+    %
     %PROPERTIES
+    %
     %NewSet - new set (matrix)
+    %
     %Model - DDSimca object
+    %
     %SD - vector (1,n) with normalized squared Euclidian distances for objects from Training Set
+    %
     %OD - vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
+    %
     %PointTitlesTest - (optional) a cellarray containing the descriptions of samples in the New Set, which are shown on the Acceptance plot. 
+    %
     %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
-    %Transformation - % transformation applied to the SD/OD on the
+    %
+    %Transformation - transformation applied to the SD/OD on the
     %Acceptance plot, values: 'log' (default) | 'none'
+    %
     %Beta - calculated type II error
-    %Alpha - calculated type I error
+    %
+    %Alpha - (optional) calculated type I error
+    %
     %Warning - a warning text which is shown in case the New Set contains more than one class of samples.
+    %
     %CalculateBeta - (optional) flag which indicates whether the type II error should be calculated for the New Set. (default - true)
     %
     %
@@ -41,7 +58,7 @@ classdef DDSTask<handle
     %%Let's suppose Model is an object of DDSimca class 
     %%containing the DD-SIMCA model
     %
-    %%create a DDSTasl object for the new data set
+    %%create a DDSTask object for the new data set
     %NewClass = DDSTask(Model, TestSet);
     %%draw acceptance plot
     %NewClass.AcceptancePlot();
@@ -49,6 +66,7 @@ classdef DDSTask<handle
     %NewClass.Beta
     %%check whether the New Set contains more than one class of samples.
     %NewClass.Warning
+    %
     %
     %SEE ALSO DDSimca
    properties
@@ -256,7 +274,7 @@ end
                 %Step 2
                 if Disc < 0
                     %warning('The test set is splitted into several subclasses!');
-                    result.warning = 'The test set is splitting into several subclasses!';
+                    result.warning = 'The New Set contains more than one alternative class of objects!';
                     c1 = c1(1:end-1,:);
                     I1 = I1 - 1;
                 else
