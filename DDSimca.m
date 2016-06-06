@@ -148,6 +148,8 @@ classdef  DDSimca<handle
     %
     %HasOutliers % outlier objects indicator
     %
+    %AutoAlpha %automatically calculata significance level (type I error,
+    %Alpha) (logical), values = false (default)|true
     %
     %USAGE EXAMPLE
     %%Let's suppose TrainingSet is the matrix 
@@ -203,7 +205,7 @@ classdef  DDSimca<handle
         Centering = false% Preprocessing of the (Centering)
         Scaling = false% Preprocessing (Scaling)
         
-        Alpha % significance level (type I error)(scalar), must be in the range [0,1]. If Alpha is set to empty value [], it is
+        Alpha = 0.01% significance level (type I error)(scalar), must be in the range [0,1]. If Alpha is set to empty value [], it is
     %calculated automatically to build a model without extreme objects.
         Gamma % outlier level (scalar), must be in the range [0,1]
               
@@ -214,10 +216,14 @@ classdef  DDSimca<handle
         
         EstimationMethod = 'classic' %type of calculation of SIMCA parameters (string), values: 'classic' (default) | 'robust'; 'classic' - method of moments, 'robust' - robust methods
         
+        AutoAlpha = false %automatically calculata significance level (type I error, Alpha)
+        
+        
     end
     
     properties (Access = private)
         TrainingSet_ % a copy of Training Set for internal use
+        Recalc = true % control of the automatic model recalculation on paramaters change (for internal use)
     end
     
     properties (Dependent = true)
@@ -265,13 +271,16 @@ classdef  DDSimca<handle
             
             self.Centering = value;
             
-            if value == true
+            self.TrainingSet_ = self.TrainingSet;
+            
+            if self.Centering == true
                 self.TrainingSet_mean = mean(self.TrainingSet);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
-            else
-                if self.Scaling == false
-                    self.TrainingSet_ = self.TrainingSet;
-                end
+            end
+    
+            if self.Scaling == true
+                self.TrainingSet_std = std(self.TrainingSet,1,1);
+                self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
             end
             
             self.dds_process();
@@ -282,13 +291,16 @@ classdef  DDSimca<handle
             
             self.Scaling = value;
             
-            if value == true
+            self.TrainingSet_ = self.TrainingSet;
+            
+            if self.Centering == true
+                self.TrainingSet_mean = mean(self.TrainingSet);
+                self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
+            end
+    
+            if self.Scaling == true
                 self.TrainingSet_std = std(self.TrainingSet,1,1);
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
-            else
-                if self.Centering == false
-                    self.TrainingSet_ = self.TrainingSet;
-                end
             end
     
             self.dds_process();
@@ -297,10 +309,20 @@ classdef  DDSimca<handle
         function set.Alpha(self,value) 
             %Alpha get/set
             
-            oldValue = self.Alpha;
             self.Alpha = value;
                 
-            if ~isempty(oldValue)
+            if self.Recalc == true
+                self.dds_process();
+            end
+
+        end
+        
+        function set.AutoAlpha(self,value) 
+            %AutoAlpha get/set
+            
+            self.AutoAlpha = value;
+                
+            if self.Recalc == true && (value == true || value == false && ~isempty(self.Alpha))
                 self.dds_process();
             end
 
@@ -500,9 +522,13 @@ classdef  DDSimca<handle
             
             %extreme borders for OD and SD; array of extreme objects
             
-            if isempty(self.Alpha)
+            if self.AutoAlpha == true
                 alphaError = self.alpha_error(DoF_sd*v_sdT_+DoF_od*v_odT_, DoF_sd+DoF_od);
+                
+                self.Recalc = false;
                 self.Alpha = alphaError;
+                self.Recalc = true;
+                
             else
                 alphaError = self.Alpha;
             end

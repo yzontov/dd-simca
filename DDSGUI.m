@@ -310,10 +310,10 @@ lblModelSamples = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', 
 lblModelExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 320 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 330 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
-lblModelCalculatedAlpha = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 300 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 310 140 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
@@ -332,10 +332,10 @@ lblModelSamples = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', 
 lblModelExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 320 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 330 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
-lblModelCalculatedAlpha = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 300 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 310 140 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
@@ -353,7 +353,7 @@ end
 function btnModelBuild_Callback(~, ~)
    
 h = waitbar(0, 'Please wait...');
-set(h, 'WindowStyle','modal', 'CloseRequestFcn','');
+%set(h, 'WindowStyle','modal', 'CloseRequestFcn','');
 
 numPC = str2double(get(tbNumPC,'string'));
 Model = DDSimca(TrainingSet, numPC);
@@ -369,7 +369,7 @@ selected_method = get(ddlEstimation,'value');
 Model.EstimationMethod = estimation_methods{selected_method};
 waitbar(3/10, h);
 if get(chkCentering,'Value') == 1
-   Model.Centering = true; 
+   Model.Centering = true;
 else
    Model.Centering = false; 
 end
@@ -388,9 +388,12 @@ end
 waitbar(6/10, h);
 alphaAuto = get(chkAlphaAuto, 'Value');
 if alphaAuto == 1
-    Model.Alpha = [];
+    Model.AutoAlpha = true;
+    set(lblModelCalculatedAlpha, 'string', sprintf('Calculated Alpha: %f', Model.Alpha));
 else
+    Model.AutoAlpha = false;
     Model.Alpha = str2double(get(tbAlpha,'string'));
+    set(lblModelCalculatedAlpha, 'String', '');
 end
 waitbar(7/10, h);
 if get(ddlAxesTransform, 'Value') == 1
