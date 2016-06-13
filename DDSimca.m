@@ -279,7 +279,9 @@ classdef  DDSimca<handle
             end
     
             if self.Scaling == true
-                self.TrainingSet_std = std(self.TrainingSet,1,1);
+                temp = std(self.TrainingSet,0,1);
+                temp(temp == 0) = 1;
+                self.TrainingSet_std = temp;
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
             end
             
@@ -299,7 +301,9 @@ classdef  DDSimca<handle
             end
     
             if self.Scaling == true
-                self.TrainingSet_std = std(self.TrainingSet,1,1);
+                temp = std(self.TrainingSet,0,1);
+                temp(temp == 0) = 1;
+                self.TrainingSet_std = temp;
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
             end
     
@@ -542,7 +546,7 @@ classdef  DDSimca<handle
                 %outlier borders for OD and SD; array of outlier objects
                 alpha_out=1-((1-gamma)^(1/n));
                 dout=self.border(DoF_od, DoF_sd, border_type, alpha_out);
-                v_outT=self.extremes(v_odT,v_sdT, dout, border_type);
+                v_outT=self.extremes(v_odT_,v_sdT_, dout, border_type);
             end
             
             self.Loadings = P(:,1:NumPC);
@@ -603,17 +607,24 @@ classdef  DDSimca<handle
             % robustest - estimation of mean and DoF in a robust manner
             %----------------------------------------------
             M=median(v_uT);
-            R=iqr(v_uT);
+            %R=DDSimca.iqr_(v_uT);
+            %R = iqr(v_uT);
+            R = quantile(v_uT, 0.75) - quantile(v_uT, 0.25);
             DF=R/M;
             if (DF > 2.685592117)
                 DoF=1;
             elseif (DF < 0.194565995)
                 DoF=100;
             else
-                DoF = round(exp((1.380948*log(2.68631 / DF)) ^ 1.185789));
-                R1=double(DoF);
+                DoF = round(exp((1.380948*log(2.68631 / DF)) ^ 1.185785));
             end
-            aver=0.5*R1*((M/DDSimca.chi2inv_(0.5,R1))+(R/(DDSimca.chi2inv_(0.75,R1)-DDSimca.chi2inv_(0.25,R1))));
+            R1=double(DoF);
+            
+            dChi = DDSimca.chi2inv_(0.75,R1)-DDSimca.chi2inv_(0.25,R1);
+            dChm = DDSimca.chi2inv_(0.5,R1);
+            
+            aver=0.5*R1*(M/dChi + R/dChm);
+
             % end of robustest function
         end
         
@@ -638,6 +649,28 @@ classdef  DDSimca<handle
     end
     
     methods (Static)
+        function iqr = iqr_(x)
+            % Compute Interquartile Range (IQR)
+            % based on example by Chris D. Larson 
+            % 14 Sep 2004 (Updated 17 Sep 2004)
+            % http://www.mathworks.com/matlabcentral/fileexchange/5877-quartile---percentile-calculation/content/quartile.m
+            
+            % rank the data
+            y = sort(x);
+
+            % compute 25th percentile (first quartile)
+            Q(1) = median(y(y<median(y)));
+
+            % compute 50th percentile (second quartile)
+            Q(2) = median(y);
+
+            % compute 75th percentile (third quartile)
+            Q(3) = median(y(y>median(y)));
+
+            % compute Interquartile Range (IQR)
+            iqr = Q(3)-Q(1);
+        end
+        
         function r = chi2cdf_(val, dof)
             %Chi-square cumulative distribution function.
             

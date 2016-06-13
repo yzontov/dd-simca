@@ -353,6 +353,7 @@ end
 function btnModelBuild_Callback(~, ~)
    
 h = waitbar(0, 'Please wait...');
+try
 %set(h, 'WindowStyle','modal', 'CloseRequestFcn','');
 
 numPC = str2double(get(tbNumPC,'string'));
@@ -432,6 +433,10 @@ end
 waitbar(10/10, h);
 %pause(.5);
 delete(h);
+catch ME
+delete(h);
+warndlg(ME.message);
+end
 end
 
 function btnModelGraph_Callback(~, ~)
@@ -639,22 +644,24 @@ set(lblModelOutliers,'string', '');
 end
 
 function btnPredictBuild_Callback(~, ~)
+h = waitbar(0, 'Please wait...');
+try
 
 Task = DDSTask(Model, NewSet);
 
 val = get(chkCalcBeta,'Value');
 Task.CalculateBeta = val;
-    
+waitbar(1/5, h);    
 set(btnPredictSave,'Enable','on');
 set(btnPredictSave,'Enable','on');
 set(btnPredictGraph,'Enable','on');
-
+waitbar(2/5, h);
 if ~isempty(Task.Warning)
     set(lblWarning,'String', ['Warning: ' Task.Warning]);
 else
     set(lblWarning,'String','');
 end
-
+waitbar(3/5, h);
 if ~isempty(Task.Beta)
     set(lblBeta,'String', ['Beta: ' num2str(Task.Beta)]);
 else
@@ -664,10 +671,16 @@ else
         set(lblBeta,'String','');
     end
 end
+waitbar(4/5, h);
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
 set(lblExtremes,'string', sprintf('Extremes: %d', sum(Task.ExtremeObjects)));
-
+waitbar(5/5, h);
+delete(h);
+catch ME
+delete(h);
+warndlg(ME.message);
+end
 end
 
 function btnPredictGraph_Callback(~, ~)
