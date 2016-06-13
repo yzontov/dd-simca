@@ -1,4 +1,4 @@
-% To illustrate the functionality of the toolbox we use a famous Fischer's Iris Data Set [], 
+% To illustrate the functionality of the toolbox we use a famous Fischer's Iris Data Set [https://archive.ics.uci.edu/ml/datasets/Iris], 
 % which consists of three classes of 50 samples each. 
 % The classes correspond to Iris species: Setosa (class 1), Versicolor (class 2), and Virginica (class 3).
 % In classification, each class is consequently used as a target versus two remaining classes. 
