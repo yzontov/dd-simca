@@ -1,57 +1,57 @@
 classdef  DDSimca<handle
     %
-    %DDSimca class is the implementation of DD-SIMCA 
-    %method in Matlab scripting language and is part of 
+    %DDSimca class is the implementation of DD-SIMCA
+    %method in Matlab scripting language and is part of
     %DD-SIMCA Toolbox.
     %
-    %The software was successfully tested on MATLAB R2010a and R2015b 
-    %on Microsoft Windows and R2014b on Mac OS. 
-    %The Toolbox relies on own implementation of various statistical 
+    %The software was successfully tested on MATLAB R2010a and R2015b
+    %on Microsoft Windows and R2014b on Mac OS.
+    %The Toolbox relies on own implementation of various statistical
     %functions and thus may be used without the MATLAB Statistics Toolbox.
     %
-    %The parameters of the model is initially calculated in the constructor 
+    %The parameters of the model is initially calculated in the constructor
     %when the DDSimca object is created. The model is being automatically
     %rebuilt when one of the following parameters is changed in the calling
     %procedure: TrainingSet, Centering, Scaling, Alpha, Gamma, BorderType,
     %EstimationMethod
     %
     %METHOD
-    %Data Driven SIMCA (DD-SIMCA) is a method for 
-    %the disjoint class modeling 
-    %that develops a well-known SIMCA approach. 
-    %The distinctive feature of DD-SIMCA is possibility 
-    %to introduce (calculate) the misclassification 
+    %Data Driven SIMCA (DD-SIMCA) is a method for
+    %the disjoint class modeling
+    %that develops a well-known SIMCA approach.
+    %The distinctive feature of DD-SIMCA is possibility
+    %to introduce (calculate) the misclassification
     %errors theoretically.
     %
     %SIMCA is based on the Principal Component Analysis (PCA)
     %that is applied to the target class training datamatrix.
-    %For each object from the training set two distances are 
-    %calculated. 
+    %For each object from the training set two distances are
+    %calculated.
     %
-    %They are the score distance (SD) and the orthogonal 
-    %distance (OD). The SD characterizes a sample position 
-    %within the score space, and OD represents the distance 
+    %They are the score distance (SD) and the orthogonal
+    %distance (OD). The SD characterizes a sample position
+    %within the score space, and OD represents the distance
     %of the sample to the score space.
-    %It was shown that the distributions of both distances 
-    %are well approximated by the scaled chi-squared 
+    %It was shown that the distributions of both distances
+    %are well approximated by the scaled chi-squared
     %distribution.
     %
-    %The scaling factors and numbers of the degrees 
-    %of freedom (DoF) of these distributions 
-    %are considered unknown and are estimated using 
-    %the distance samples obtained from the training set. 
-    %Given the type I error Alpha the acceptance area 
+    %The scaling factors and numbers of the degrees
+    %of freedom (DoF) of these distributions
+    %are considered unknown and are estimated using
+    %the distance samples obtained from the training set.
+    %Given the type I error Alpha the acceptance area
     %may be calculated.
     %
-    %In case an alternative class is available, 
-    %we project it on the PC space and calculate 
+    %In case an alternative class is available,
+    %we project it on the PC space and calculate
     %the SD and OD for the alternative class.
-    %By using this approach, it is possible to plot 
-    %every sample and the acceptance area in the 
+    %By using this approach, it is possible to plot
+    %every sample and the acceptance area in the
     %coordinates of SD against OD.
     %
     %Additional transformation (e.g. ln(1 + x/x0))
-    %may be applied to the axes for better readability 
+    %may be applied to the axes for better readability
     %of the plot.
     %
     %
@@ -96,9 +96,9 @@ classdef  DDSimca<handle
     %
     %PointTitlesTest - names of the objects (optional)
     %
-    %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
+    %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object.
     %
-    %OutlierObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object. 
+    %OutlierObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object.
     %
     %TrainingSet - training set (matrix)
     %
@@ -122,14 +122,14 @@ classdef  DDSimca<handle
     %
     %OutlierLevel - offset values for outlier border
     %
-    %BorderType - the border type in SIMCA plot, 
+    %BorderType - the border type in SIMCA plot,
     %values: 'chi-square' (default) | 'rectangle'
     %
     %Centering - Preprocessing of the (Centering)
     %
     %Scaling - Preprocessing (Scaling)
     %
-    %Alpha - significance level (type I error)(scalar), 
+    %Alpha - significance level (type I error)(scalar),
     %must be in the range [0,1]. If Alpha is set to empty value [], it is
     %calculated automatically to build a model without extreme objects.
     %
@@ -152,8 +152,8 @@ classdef  DDSimca<handle
     %Alpha) (logical), values = false (default)|true
     %
     %USAGE EXAMPLE
-    %%Let's suppose TrainingSet is the matrix 
-    %%containing N spectra on M wavelengths, 
+    %%Let's suppose TrainingSet is the matrix
+    %%containing N spectra on M wavelengths,
     %%which is used as Trainig Set for the model.
     %
     %
@@ -186,8 +186,8 @@ classdef  DDSimca<handle
         OD % vector (1,n) with normalized squared Euclidian distances for objects from Training Set
         SD % vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
         PointTitlesTest % names of the objects (optional)
-        ExtremeObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
-        OutlierObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object. 
+        ExtremeObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object.
+        OutlierObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object.
         TrainingSet % training set (matrix)
         numPC = 2%number of principal components
         Loadings %loadings matrix
@@ -200,15 +200,15 @@ classdef  DDSimca<handle
         DoF_OD % number of Degrees of Freedom of chi-square distribution of OD
         CriticalLevel % offset values for extreme border
         OutlierLevel % offset values for outlier border
-        BorderType = 'chi-square'% the border type in SIMCA plot, values: 'chi-square' (default) | 'rectangle' 
+        BorderType = 'chi-square'% the border type in SIMCA plot, values: 'chi-square' (default) | 'rectangle'
         
         Centering = false% Preprocessing of the (Centering)
         Scaling = false% Preprocessing (Scaling)
         
         Alpha = 0.01% significance level (type I error)(scalar), must be in the range [0,1]. If Alpha is set to empty value [], it is
-    %calculated automatically to build a model without extreme objects.
+        %calculated automatically to build a model without extreme objects.
         Gamma % outlier level (scalar), must be in the range [0,1]
-              
+        
         Transformation = 'log' % transformation applied to the SD/OD on the Acceptance plot, values: 'log' (default) | 'none'
         
         TrainingSet_mean % mean values of the Training Set (used for preprocessing of Test Set or New Set in the DDSTask class)
@@ -257,7 +257,7 @@ classdef  DDSimca<handle
                 self.TrainingSet_mean = mean(self.TrainingSet);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
             end
-    
+            
             if self.Scaling == true
                 self.TrainingSet_std = std(self.TrainingSet,1,1);
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
@@ -277,7 +277,7 @@ classdef  DDSimca<handle
                 self.TrainingSet_mean = mean(self.TrainingSet);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
             end
-    
+            
             if self.Scaling == true
                 temp = std(self.TrainingSet,0,1);
                 temp(temp == 0) = 1;
@@ -299,59 +299,59 @@ classdef  DDSimca<handle
                 self.TrainingSet_mean = mean(self.TrainingSet);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
             end
-    
+            
             if self.Scaling == true
                 temp = std(self.TrainingSet,0,1);
                 temp(temp == 0) = 1;
                 self.TrainingSet_std = temp;
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
             end
-    
+            
             self.dds_process();
         end
         
-        function set.Alpha(self,value) 
+        function set.Alpha(self,value)
             %Alpha get/set
             
             self.Alpha = value;
-                
+            
             if self.Recalc == true
                 self.dds_process();
             end
-
+            
         end
         
-        function set.AutoAlpha(self,value) 
+        function set.AutoAlpha(self,value)
             %AutoAlpha get/set
             
             self.AutoAlpha = value;
-                
+            
             if self.Recalc == true && (value == true || value == false && ~isempty(self.Alpha))
                 self.dds_process();
             end
-
+            
         end
         
-        function set.Gamma(self,value) 
+        function set.Gamma(self,value)
             %Gamma get/set
             self.Gamma = value;
-
+            
             self.dds_process();
         end
         
-        function set.BorderType(self,value) 
+        function set.BorderType(self,value)
             %BorderType get/set
             
             self.BorderType = value;
-
+            
             self.dds_process();
         end
         
-        function set.EstimationMethod(self,value) 
+        function set.EstimationMethod(self,value)
             %EstimationMethod get/set
             
             self.EstimationMethod = value;
-
+            
             self.dds_process();
         end
         
@@ -488,7 +488,7 @@ classdef  DDSimca<handle
     end
     
     methods (Access = private)
-
+        
         function dds_process(self)
             %create the model and calculate all the parameters
             gamma = [];
@@ -607,9 +607,9 @@ classdef  DDSimca<handle
             % robustest - estimation of mean and DoF in a robust manner
             %----------------------------------------------
             M=median(v_uT);
-            %R=DDSimca.iqr_(v_uT);
+            R=DDSimca.iqr_(v_uT);
             %R = iqr(v_uT);
-            R = quantile(v_uT, 0.75) - quantile(v_uT, 0.25);
+            %R = quantile(v_uT, 0.75) - quantile(v_uT, 0.25);
             DF=R/M;
             if (DF > 2.685592117)
                 DoF=1;
@@ -623,8 +623,8 @@ classdef  DDSimca<handle
             dChi = DDSimca.chi2inv_(0.75,R1)-DDSimca.chi2inv_(0.25,R1);
             dChm = DDSimca.chi2inv_(0.5,R1);
             
-            aver=0.5*R1*(M/dChi + R/dChm);
-
+            aver=0.5*R1*(M/dChm + R/dChi);
+            
             % end of robustest function
         end
         
@@ -645,30 +645,66 @@ classdef  DDSimca<handle
             Ccrit = max(c) + 0.0001;
             alpha = 1 - DDSimca.chi2cdf_(Ccrit, k);
         end
-
+        
     end
     
     methods (Static)
+        function r = quartile(x, q, mode)
+            %Calculate Quartile
+            %
+            % x - vector
+            % q - quartile (1,2 or 3)
+            % mode - calculation algorithm (1,2,3 or 'excel')
+            
+            y = sort(x);
+            n = length(x);
+            
+            if strcmp(mode, 'excel') == 0
+                l1 = y(y<median(y));
+                h1 = y(y>median(y));
+                l2 = y(y<=median(y));
+                h2 = y(y>=median(y));
+                
+                if mod(n,2) ~= 0
+                    switch mode
+                        case 1
+                            q1 = median(l1);
+                            q3 = median(h1);
+                        case 2
+                            q1 = median(l2);
+                            q3 = median(h2);
+                        case 3
+                            q1 = (median(l1) + median(l2))/2;
+                            q3 = (median(h1) + median(h2))/2;
+                    end
+                else
+                    l = y(1:n/2);
+                    h = y(n/2+1:end);
+                    q1 = median(l);
+                    q3 = median(h);
+                end
+                
+                switch q
+                    case 1
+                        r = q1;
+                    case 2
+                        r = median(y);
+                    case 3
+                        r = q3;
+                end
+            else
+                k=(q/4)*(n-1)+1;
+                i=floor(k);
+                f=k-i;
+                r = y(i)+ f*(y(i+1)-y(i));
+            end
+            
+            
+        end
         function iqr = iqr_(x)
             % Compute Interquartile Range (IQR)
-            % based on example by Chris D. Larson 
-            % 14 Sep 2004 (Updated 17 Sep 2004)
-            % http://www.mathworks.com/matlabcentral/fileexchange/5877-quartile---percentile-calculation/content/quartile.m
             
-            % rank the data
-            y = sort(x);
-
-            % compute 25th percentile (first quartile)
-            Q(1) = median(y(y<median(y)));
-
-            % compute 50th percentile (second quartile)
-            Q(2) = median(y);
-
-            % compute 75th percentile (third quartile)
-            Q(3) = median(y(y>median(y)));
-
-            % compute Interquartile Range (IQR)
-            iqr = Q(3)-Q(1);
+            iqr = DDSimca.quartile(x, 3,'excel') - DDSimca.quartile(x, 1,'excel');
         end
         
         function r = chi2cdf_(val, dof)
