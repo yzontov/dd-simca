@@ -34,8 +34,6 @@ classdef DDSTask<handle
     %
     %OD - vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
     %
-    %PointTitlesTest - (optional) a cellarray containing the descriptions of samples in the New Set, which are shown on the Acceptance plot. 
-    %
     %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
     %
     %Transformation - transformation applied to the SD/OD on the
@@ -48,6 +46,10 @@ classdef DDSTask<handle
     %Warning - a warning text which is shown in case the New Set contains more than one class of samples.
     %
     %CalculateBeta - (optional) flag which indicates whether the type II error should be calculated for the New Set. (default - true)
+    %
+    %Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
+    %  
+    %ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
     %
     %
     %USAGE EXAMPLE
@@ -74,13 +76,18 @@ classdef DDSTask<handle
       Model % DDSimca object
       SD % vector (1,n) with normalized squared Euclidian distances for objects from Training Set
       OD % vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
-      PointTitlesTest % (optional) a cellarray containing the descriptions of samples in the New Set, which are shown on the Acceptance plot. 
       ExtremeObjects % % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
       Transformation = 'log' % transformation applied to the SD/OD on the Acceptance plot, values: 'log' (default) | 'none'
       Beta % calculated type II error
       Alpha % calculated type I error
       Warning % a warning text which is shown in case the New Set contains more than one class of samples.
       CalculateBeta = true % (optional) flag which indicates whether the type II error should be calculated for the New Set. (default - true)
+      Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
+      ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
+   end
+   
+   properties (Access = private)
+      Recalc = true % control of the automatic model recalculation on paramaters change (for internal use)
    end
    
    methods
@@ -91,9 +98,20 @@ classdef DDSTask<handle
             self.CalculateBeta = value;
             if value == false
                 self.Warning = [];
+                self.Recalc = false;
                 self.Beta = [];
+                self.Recalc = true;
             else
-                self.beta_error(self.NewSet, 0);
+                NewSet_ = self.preprocess(self.NewSet);
+                res = self.beta_error(NewSet_, 0);
+                self.Recalc = false;
+                self.Beta = res.beta;
+                
+                if isfield(res, 'warning')
+                    self.Warning = res.warning;
+                end
+                
+                self.Recalc = true;
             end
             
         end
@@ -103,8 +121,14 @@ classdef DDSTask<handle
             %Beta get/set
             prev = self.Beta;
             self.Beta = value;
-            if isempty(prev) && ~isempty(value)
-                self.beta_error(self.NewSet, value);
+            if self.Recalc && isempty(prev) && ~isempty(value)
+                NewSet_ = self.preprocess(self.NewSet);
+                res = self.beta_error(NewSet_, value);
+                self.Alpha = res.alpha;
+                
+                if isfield(res, 'alpha')
+                    self.Alpha = res.alpha;
+                end
             end
             
         end
@@ -125,6 +149,7 @@ classdef DDSTask<handle
          transform = self.Transformation;
             
             handle = figure;
+            
             set(handle,'name','Acceptance plot','numbertitle','off');
             hold on;
             title('Acceptance plot. New set', 'FontWeight', 'bold');
@@ -157,13 +182,19 @@ classdef DDSTask<handle
                 plot(SD_New(extNew == 0),OD_New(extNew == 0),'og','MarkerFaceColor','g');
                 plot(SD_New(extNew == 1),OD_New(extNew == 1),'or','MarkerFaceColor','r');
 
-                if(~isempty(self.PointTitlesTest))
-                    dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
-                    text(SD_New+dx, OD_New+dy, self.PointTitlesTest);
+                if(self.ShowLabels)
+                    labels = strread(num2str(1:size(self.NewSet, 1)),'%s');
+                    if(~isempty(self.Labels))
+                        labels = self.Labels;
+                    end
+                    
+                     dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
+                     text(SD_New+dx, OD_New+dy, labels);
                 end
             
 
             hold off;
+            DDSimca.randomize_plot_position(handle);
         end
           
           
@@ -212,7 +243,9 @@ if ~isempty(beta_res)
     end
 
     if isfield(beta_res, 'beta')
+        self.Recalc = false;
         self.Beta = beta_res.beta;
+        self.Recalc = true;
     end
 
     if isfield(beta_res, 'warning')

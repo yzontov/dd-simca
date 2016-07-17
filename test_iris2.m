@@ -210,7 +210,8 @@ Model.AcceptancePlot();
 
 % Create the DD-Simca task object for the new data (Test Set)
 NewClass = DDSTask(Model, TestSet);
-NewClass.PointTitlesTest = TestSetNames;
+NewClass.Labels = TestSetNames;
+NewClass.ShowLabels = true;
 
 % Create and show Acceptance Plot for the Test Set
 NewClass.AcceptancePlot();

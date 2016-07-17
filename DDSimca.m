@@ -94,8 +94,6 @@ classdef  DDSimca<handle
     %
     %SD - vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
     %
-    %PointTitlesTest - names of the objects (optional)
-    %
     %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object.
     %
     %OutlierObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object.
@@ -151,6 +149,12 @@ classdef  DDSimca<handle
     %AutoAlpha %automatically calculata significance level (type I error,
     %Alpha) (logical), values = false (default)|true
     %
+    %Labels - (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
+    %    
+    %ShowLabels - Show the labels of samples in the Training Set (logical),
+    %values = false (default)|true
+    %
+    %
     %USAGE EXAMPLE
     %%Let's suppose TrainingSet is the matrix
     %%containing N spectra on M wavelengths,
@@ -185,7 +189,6 @@ classdef  DDSimca<handle
     properties
         OD % vector (1,n) with normalized squared Euclidian distances for objects from Training Set
         SD % vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
-        PointTitlesTest % names of the objects (optional)
         ExtremeObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object.
         OutlierObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object.
         TrainingSet % training set (matrix)
@@ -202,8 +205,8 @@ classdef  DDSimca<handle
         OutlierLevel % offset values for outlier border
         BorderType = 'chi-square'% the border type in SIMCA plot, values: 'chi-square' (default) | 'rectangle'
         
-        Centering = false% Preprocessing of the (Centering)
-        Scaling = false% Preprocessing (Scaling)
+        Centering = false% (boolean) Preprocessing (Centering)
+        Scaling = false% (boolean) Preprocessing (Scaling)
         
         Alpha = 0.01% significance level (type I error)(scalar), must be in the range [0,1]. If Alpha is set to empty value [], it is
         %calculated automatically to build a model without extreme objects.
@@ -216,8 +219,11 @@ classdef  DDSimca<handle
         
         EstimationMethod = 'classic' %type of calculation of SIMCA parameters (string), values: 'classic' (default) | 'robust'; 'classic' - method of moments, 'robust' - robust methods
         
-        AutoAlpha = false %automatically calculata significance level (type I error, Alpha)
+        AutoAlpha = false %automatically calculata significance level (type I error, Alpha)(logical), values = false (default)|true
         
+        Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
+        
+        ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
         
     end
     
@@ -372,6 +378,7 @@ classdef  DDSimca<handle
             transform = self.Transformation;
             
             handle = figure;
+            
             set(handle,'name','Acceptance plot','numbertitle','off');
             hold on;
             
@@ -435,7 +442,19 @@ classdef  DDSimca<handle
             end
             
             legend('boxon');
+            
+            if(self.ShowLabels)
+                    labels = strread(num2str(1:size(self.TrainingSet, 1)),'%s');
+                    if(~isempty(self.Labels))
+                        labels = self.Labels;
+                    end
+                    
+                     dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
+                     text(sD+dx, oD+dy, labels);
+            end
+            
             hold off;
+            DDSimca.randomize_plot_position(handle);
         end
         
         function [handle, N, Nplus, Nminus] = ExtremePlot(self)
@@ -464,6 +483,7 @@ classdef  DDSimca<handle
             end
             
             handle = figure;
+            
             set(handle,'name','Extreme plot','numbertitle','off');
             hold on;
             title('Extreme plot', 'FontWeight', 'bold');
@@ -483,7 +503,7 @@ classdef  DDSimca<handle
             legend('boxon');
             
             hold off;
-            
+            DDSimca.randomize_plot_position(handle);
         end
     end
     
@@ -649,6 +669,26 @@ classdef  DDSimca<handle
     end
     
     methods (Static)
+        
+        function randomize_plot_position(h)
+           %Randomize plot position
+           %Used by ExtremePlot and AcceptancePlot methods
+           %
+           % h - figure handle
+           
+           screen = get( 0, 'Screensize' );
+           screen_width = screen(3);
+           screen_height = screen(4);
+
+            pos = get(h, 'Position'); 
+            plot_width = pos(3);
+            plot_height = pos(4);
+
+            x = randi(screen_width - plot_width,1,1);
+            y = randi(screen_height - plot_height - 100,1,1);
+            set(h, 'Position', [x, y, plot_width, plot_height]); 
+        end
+        
         function r = quartile(x, q, mode)
             %Calculate Quartile
             %
