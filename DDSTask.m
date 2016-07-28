@@ -2,7 +2,7 @@ classdef DDSTask<handle
     %
     %DDSTask class is part of DDSimca Toolbox and
     %is intended for testing of new classes of samples 
-    %using a previosly created DD-SIMCA model
+    %using a previously created DD-SIMCA model
     %and calculation of type II error Beta
     %
     %METHODS
@@ -47,9 +47,9 @@ classdef DDSTask<handle
     %
     %CalculateBeta - (optional) flag which indicates whether the type II error should be calculated for the New Set. (default - true)
     %
-    %Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
+    %Labels - (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
     %  
-    %ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
+    %ShowLabels - Show the labels of samples in the Training Set (logical), values = true (default)|false
     %
     %
     %USAGE EXAMPLE

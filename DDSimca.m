@@ -128,10 +128,9 @@ classdef  DDSimca<handle
     %Scaling - Preprocessing (Scaling)
     %
     %Alpha - significance level (type I error)(scalar),
-    %must be in the range [0,1]. If Alpha is set to empty value [], it is
-    %calculated automatically to build a model without extreme objects.
+    %must be in the range (0,1]. 
     %
-    %Gamma - outlier level (scalar), must be in the range [0,1]
+    %Gamma - outlier level (scalar), must be in the range (0,1]
     %
     %Transformation - transformation applied to the SD/OD on the Acceptance
     %plot, values: 'log' (default) | 'none'
@@ -142,9 +141,9 @@ classdef  DDSimca<handle
     %
     %EstimationMethod - type of calculation of SIMCA parameters (string), values: 'classic' (default) | 'robust'; 'classic' - method of moments, 'robust' - robust methods
     %
-    %HasExtremes % extreme objects indicator
+    %HasExtremes - extreme objects indicator
     %
-    %HasOutliers % outlier objects indicator
+    %HasOutliers - outlier objects indicator
     %
     %AutoAlpha %automatically calculata significance level (type I error,
     %Alpha) (logical), values = false (default)|true
@@ -208,9 +207,8 @@ classdef  DDSimca<handle
         Centering = false% (boolean) Preprocessing (Centering)
         Scaling = false% (boolean) Preprocessing (Scaling)
         
-        Alpha = 0.01% significance level (type I error)(scalar), must be in the range [0,1]. If Alpha is set to empty value [], it is
-        %calculated automatically to build a model without extreme objects.
-        Gamma % outlier level (scalar), must be in the range [0,1]
+        Alpha = 0.01% significance level (type I error)(scalar), must be in the range (0,1]. 
+        Gamma % outlier level (scalar), must be in the range (0,1]
         
         Transformation = 'log' % transformation applied to the SD/OD on the Acceptance plot, values: 'log' (default) | 'none'
         
