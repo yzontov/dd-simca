@@ -153,6 +153,8 @@ classdef  DDSimca<handle
     %ShowLabels - Show the labels of samples in the Training Set (logical),
     %values = false (default)|true
     %
+    %AcceptancePlotTitle - Additional figure title shown on the acceptance plot
+    %
     %
     %USAGE EXAMPLE
     %%Let's suppose TrainingSet is the matrix
@@ -222,7 +224,7 @@ classdef  DDSimca<handle
         Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
         
         ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
-        
+        AcceptancePlotTitle % Additional figure title shown on the acceptance plot
     end
     
     properties (Access = private)
@@ -377,11 +379,16 @@ classdef  DDSimca<handle
             
             handle = figure;
             
-            set(handle,'name','Acceptance plot','numbertitle','off');
+            if isempty(self.AcceptancePlotTitle)
+                set(handle,'name','Acceptance plot','numbertitle','off');
+                title('Acceptance plot. Training set', 'FontWeight', 'bold');
+            else
+                set(handle,'name',sprintf('Acceptance plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
+                title(sprintf('Acceptance plot. Training set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold');
+            end
+            
             hold on;
-            
-            title('Acceptance plot. Training set', 'FontWeight', 'bold');
-            
+
             xlabel('h/h_0', 'FontWeight', 'bold');
             ylabel('v/v_0', 'FontWeight', 'bold');
             

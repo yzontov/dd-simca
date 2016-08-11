@@ -51,6 +51,8 @@ classdef DDSTask<handle
     %  
     %ShowLabels - Show the labels of samples in the Training Set (logical), values = true (default)|false
     %
+    %AcceptancePlotTitle - Additional figure title shown on the acceptance plot
+    %
     %
     %USAGE EXAMPLE
     %%Let's suppose TestSet is the matrix 
@@ -84,6 +86,7 @@ classdef DDSTask<handle
       CalculateBeta = true % (optional) flag which indicates whether the type II error should be calculated for the New Set. (default - true)
       Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
       ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
+      AcceptancePlotTitle % Additional figure title shown on the acceptance plot
    end
    
    properties (Access = private)
@@ -149,10 +152,16 @@ classdef DDSTask<handle
          transform = self.Transformation;
             
             handle = figure;
+
+            if isempty(self.AcceptancePlotTitle)
+                set(handle,'name','Acceptance plot','numbertitle','off');
+                title('Acceptance plot. New set', 'FontWeight', 'bold');
+            else
+                set(handle,'name',sprintf('Acceptance plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
+                title(sprintf('Acceptance plot. New set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold');
+            end
             
-            set(handle,'name','Acceptance plot','numbertitle','off');
             hold on;
-            title('Acceptance plot. New set', 'FontWeight', 'bold');
             
             xlabel('h/h_0', 'FontWeight', 'bold');
             ylabel('v/v_0', 'FontWeight', 'bold');
@@ -171,8 +180,6 @@ classdef DDSTask<handle
             [x,y] = DDSimca.plot_border(crit_levels, self.Model.BorderType, transform);
             plot(x, y, '-g');
         end
-           
-               
                 OD_New = DDSimca.transform_(transform, self.OD/self.Model.OD_mean);
                 SD_New = DDSimca.transform_(transform, self.SD/self.Model.SD_mean);
                 extNew = self.ExtremeObjects;
@@ -307,7 +314,7 @@ end
                 %Step 2
                 if Disc < 0
                     %warning('The test set is splitted into several subclasses!');
-                    result.warning = 'The New Set contains more than one alternative class of objects!';
+                    result.warning = 'The New Set contains more than one class of external objects!';
                     c1 = c1(1:end-1,:);
                     I1 = I1 - 1;
                 else

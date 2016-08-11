@@ -4,11 +4,16 @@ function DDSGUI(varargin)
 TrainingSet= [];
 NewSet= [];
 
+TrainingSetName= [];
+NewSetName= [];
+
 TrainingSetLabels= [];
 NewSetLabels= [];
 
 Model = [];
 Task = [];
+
+ModelName = [];
 
 %get version year
 v = version('-release');
@@ -22,6 +27,10 @@ set(f, 'ToolBar', 'none');
 set(f,'name','DD-SIMCA Toolbox','numbertitle','off');
 set(f, 'Resize', 'off');
 set(f, 'Position', [100 100 600 500]);
+
+mh = uimenu(f,'Label','Help');
+uimenu(mh,'Label','Help on DDSimca class','Callback', @DDSimcaHelp_Callback);
+uimenu(mh,'Label','Help on DDSTask class','Callback', @DDSTaskHelp_Callback);
 
 if vyear < 2014
 tgroup = uitabgroup('v0','Parent', f);
@@ -40,7 +49,7 @@ uipanel('Parent', tab_model, 'Title', 'Data sets', 'Position', [0.02   0.84   0.
 uipanel('Parent', tab_model, 'Title', 'Preprocessing', 'Position', [0.02   0.71   0.46  0.12]);
 uipanel('Parent', tab_model, 'Title', 'Model parameters', 'Position', [0.02   0.3   0.46  0.39]);
 uipanel('Parent', tab_model, 'Title', 'Results and statistics', 'Position', [0.50   0.13   0.48  0.70]);
-uipanel('Parent', tab_model, 'Title', 'Current model', 'Position', [0.50   0.84   0.48  0.16]);
+grpCurrentModelModel = uipanel('Parent', tab_model, 'Title', 'Current model', 'Position', [0.50   0.84   0.48  0.16]);
 
 
 if(ispc)
@@ -58,9 +67,9 @@ lblTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'text', 'String',
 
 %preprocessing
 chkCentering = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Centering',...
-    'Position', [20 345 100 30]);
+    'Position', [20 345 100 30], 'callback', @Input_ModelParameters);
 chkScaling = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Scaling',...
-    'Position', [160 345 100 30]);
+    'Position', [160 345 100 30], 'callback', @Input_ModelParameters);
 
 %model params
 %lblNumPC
@@ -87,13 +96,13 @@ tbGamma = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '0.01',...
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type of aceptance area', ...
  'Position', [20 190 150 15], 'HorizontalAlignment', 'left'); 
 ddlArea = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {'chi-square','rectangle'},...
-    'Value',1, 'Position', [180 180 100 30], 'BackgroundColor', 'white');
+    'Value',1, 'Position', [180 180 100 30], 'BackgroundColor', 'white', 'callback', @Input_ModelParameters);
 
 %lblEstimation
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Method of estimation', ...
  'Position', [20 160 100 15], 'HorizontalAlignment', 'left'); 
 ddlEstimation = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {'classic','robust'},...
-    'Value',1, 'Position', [180 150 100 30], 'BackgroundColor', 'white');
+    'Value',1, 'Position', [180 150 100 30], 'BackgroundColor', 'white', 'callback', @Input_ModelParameters);
 
 end
 
@@ -112,9 +121,9 @@ lblTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'text', 'String',
 
 %preprocessing
 chkCentering = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Centering',...
-    'Position', [20 335 100 30]);
+    'Position', [20 335 100 30], 'callback', @Input_ModelParameters);
 chkScaling = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Scaling',...
-    'Position', [160 335 100 30]);
+    'Position', [160 335 100 30], 'callback', @Input_ModelParameters);
 
 %model params
 %lblNumPC
@@ -141,13 +150,13 @@ tbGamma = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '0.01',...
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type of aceptance area', ...
  'Position', [20 190 150 15], 'HorizontalAlignment', 'left'); 
 ddlArea = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {'chi-square','rectangle'},...
-    'Value',1, 'Position', [170 190 100 20], 'BackgroundColor', 'white');
+    'Value',1, 'Position', [170 190 100 20], 'BackgroundColor', 'white', 'callback', @Input_ModelParameters);
 
 %lblEstimation
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Method of estimation', ...
  'Position', [20 160 100 15], 'HorizontalAlignment', 'left'); 
 ddlEstimation = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {'classic','robust'},...
-    'Value',1, 'Position', [170 160 100 20], 'BackgroundColor', 'white');
+    'Value',1, 'Position', [170 160 100 20], 'BackgroundColor', 'white', 'callback', @Input_ModelParameters);
 
 end
 
@@ -161,7 +170,7 @@ end
 group_predict_data = uipanel('Parent', tab_predict, 'Title', 'Data set');
 set(group_predict_data, 'Position', [0.02   0.84   0.46  0.16]);
 uipanel('Parent', tab_predict, 'Title', 'Results and statistics', 'Position', [0.50   0.13   0.48  0.70]);
-uipanel('Parent', tab_predict, 'Title', 'Current model', 'Position', [0.50   0.84   0.48  0.16]);
+grpCurrentModelPredict = uipanel('Parent', tab_predict, 'Title', 'Current model', 'Position', [0.50   0.84   0.48  0.16]);
 
 if(ispc)
 %btnNewSet
@@ -175,14 +184,14 @@ btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'Strin
 lblNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [160 402 100 15]) ;
 
-chkCalcBeta = uicontrol('Parent', tab_predict, 'Style', 'checkbox', 'String', 'Calculate type II error (Beta)',...
-    'Position', [20 360 200 30], 'Value', 1, 'callback', @chkCalcBeta_Callback);
+chkCalcAlpha = uicontrol('Parent', tab_predict, 'Style', 'checkbox', 'String', 'Calculate type I error (Alpha)',...
+    'Position', [20 360 200 30], 'Value', 0, 'callback', @chkCalcAlpha_Callback, 'Visible', 'on');
 
 %lblBeta
-%uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Predefined Type II error (Beta)', ...
-% 'Position', [20 340 200 15], 'HorizontalAlignment', 'left', 'Visible', 'off'); 
-%tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Visible', 'off','Enable','off',...
-%    'Value',1, 'Position', [178 340 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
+uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Predefined Type II error (Beta)', ...
+ 'Position', [20 340 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on'); 
+tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Visible', 'on','Enable','off',...
+    'Value',1, 'Position', [178 340 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
 
 lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 340 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
@@ -201,14 +210,14 @@ btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'Strin
 lblNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [160 392 100 15]) ;
 
-chkCalcBeta = uicontrol('Parent', tab_predict, 'Style', 'checkbox', 'String', 'Calculate type II error (Beta)',...
-    'Position', [20 340 200 30], 'Value', 1, 'callback', @chkCalcBeta_Callback);
+chkCalcAlpha = uicontrol('Parent', tab_predict, 'Style', 'checkbox', 'String', 'Calculate type I error (Alpha)',...
+    'Position', [20 340 200 30], 'Value', 0, 'callback', @chkCalcAlpha_Callback, 'Visible', 'on');
 
 %lblBetaCaption
-%uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Predefined Type II error (Beta)', ...
-% 'Position', [20 320 200 15], 'HorizontalAlignment', 'left', 'Visible', 'off'); 
-%tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Visible', 'off','Enable','off',...
-%    'Value',1, 'Position', [178 320 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
+uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Predefined Type II error (Beta)', ...
+ 'Position', [20 320 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on'); 
+tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Visible', 'on','Enable','off',...
+    'Value',1, 'Position', [178 320 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
 
 lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 330 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
@@ -216,7 +225,7 @@ lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
 end
 
 lblBeta = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 310 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 310 150 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 290 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
@@ -408,6 +417,14 @@ lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'Strin
 
 set(f,'Visible','on');
 
+function DDSimcaHelp_Callback(~, ~)
+ doc DDSimca
+end
+
+function DDSTaskHelp_Callback(~, ~)
+ doc DDSTask   
+end
+
 function chkAlphaAuto_Callback(self, ~)
 val = get(self, 'Value');
 if val == 1
@@ -415,6 +432,11 @@ if val == 1
 else
     set(tbAlpha, 'Enable', 'on');
 end
+
+    set(btnModelGraph,'Enable','off');
+    set(btnModelGraphExtreme,'Enable','off');
+    set(btnModelSave,'Enable','off');
+
 end
 
 function btnModelBuild_Callback(~, ~)
@@ -425,6 +447,7 @@ try
 
 numPC = str2double(get(tbNumPC,'string'));
 Model = DDSimca(TrainingSet, numPC);
+Model.AcceptancePlotTitle = TrainingSetName;
 waitbar(1/10, h);
 Model.Gamma = str2double(get(tbGamma,'string'));
 waitbar(2/10, h);
@@ -530,6 +553,10 @@ end
 
 set(lblCurrentPreprocessing,'string', sprintf('Preprocessing: %s', preproc));
 set(lblCurrentPreprocessing2,'string', sprintf('Preprocessing: %s', preproc));
+
+set(grpCurrentModelModel,'Title', 'Current model');
+set(grpCurrentModelPredict,'Title', 'Current model');
+
 end
 
 catch ME
@@ -599,17 +626,17 @@ end
 end
 end
 
-function chkCalcBeta_Callback(src, ~)
+function chkCalcAlpha_Callback(src, ~)
 
 val = get(src,'Value');
 if val == 1
-%    set(tbBeta,'Enable','off');
+    set(tbBeta,'Enable','on');
     
     if ~isempty(Task)
-        Task.CalculateBeta = true;
+        Task.CalculateBeta = false;
     end
 else
-%    set(tbBeta,'Enable','on');
+    set(tbBeta,'Enable','off');
     
     if ~isempty(Task)
         Task.CalculateBeta = true;
@@ -633,6 +660,9 @@ if ~isempty(tvar)
     else
        set(lblNewSetLabels,'string', sprintf('[%d x %d]', n, m));
        NewSetLabels = labels; 
+       if ~isempty(Task)
+           Task.Labels = labels;
+       end
     end
  
 end   
@@ -654,6 +684,9 @@ if ~isempty(tvar)
     else
         set(lblTrainingSetLabels,'string', sprintf('[%d x %d]', n, m));
         TrainingSetLabels = labels;
+        if ~isempty(Model)
+           Model.Labels = labels;
+       end
     end
 end   
      
@@ -786,19 +819,32 @@ end
 
 set(lblCurrentPreprocessing,'string', sprintf('Preprocessing: %s', preproc));
 set(lblCurrentPreprocessing2,'string', sprintf('Preprocessing: %s', preproc));
+
+if Model.AutoAlpha
+    set(tbAlpha,'Enable','off');
+    set(chkAlphaAuto,'Value',1)
+    set(lblModelCalculatedAlpha, 'string', sprintf('Calculated Alpha: %f', Model.Alpha));
+else
+    set(tbAlpha,'Enable','on');
+    set(chkAlphaAuto,'Value',0)
+    set(lblModelCalculatedAlpha, 'String', '');
 end
 
 end
 
+end
 
 function btnModelLoad_Callback(~, ~)
 
-tvar = uigetvariables({'Pick a DDSimca object:'}, ...
+[tvar, tvarname] = uigetvariables({'Pick a DDSimca object:'}, ...
         'ValidationFcn',{@(x) isa(x, 'DDSimca')});
 if ~isempty(tvar)  
 Model = tvar{1};
 LoadModel();
-    
+ModelName = tvarname{1};
+set(grpCurrentModelModel,'Title', sprintf('Current model - %s', ModelName));
+set(grpCurrentModelPredict,'Title', sprintf('Current model - %s', ModelName));
+
 end
 end
 
@@ -815,11 +861,16 @@ set(btnModelSave,'Enable','off');
 set(lblTrainingSet,'string', 'Not selected'); 
 TrainingSet= [];
 TrainingSetLabels = [];
+TrainingSetName = [];
 set(lblTrainingSetLabels,'string', 'Not selected'); 
 set(btnTrainingSetLabels,'Enable','off');
 
 Model = [];
+ModelName = [];
 set(btnPredictBuild,'Enable','off');
+
+set(grpCurrentModelModel,'Title', 'Current model');
+set(grpCurrentModelPredict,'Title', 'Current model');
 
 set(tbNumPC,'string', '2');
 set(tbAlpha,'string', '0.01');
@@ -858,9 +909,13 @@ h = waitbar(0, 'Please wait...');
 try
 
 Task = DDSTask(Model, NewSet);
+Task.AcceptancePlotTitle = NewSetName;
 
-val = get(chkCalcBeta,'Value');
-Task.CalculateBeta = val;
+if get(chkCalcAlpha,'Value')
+    Task.CalculateBeta = ~get(chkCalcAlpha,'Value');
+    Task.Beta = str2double(get(tbBeta,'string'));
+end
+
 waitbar(1/5, h);    
 set(btnPredictSave,'Enable','on');
 set(btnPredictSave,'Enable','on');
@@ -872,19 +927,21 @@ else
     set(lblWarning,'String','');
 end
 waitbar(3/5, h);
-if ~isempty(Task.Beta)
+if ~isempty(Task.Beta) && isempty(Task.Alpha)
     set(lblBeta,'String', ['Beta: ' num2str(Task.Beta)]);
-else
-    if ~isempty(Task.Alpha)
-        set(lblBeta,'String', ['Alpha: ' num2str(Task.Alpha)]);
-    else
+end
+    if ~isempty(Task.Alpha) && ~isempty(Task.Beta)
+        set(lblBeta,'String', ['Calculated Alpha: ' num2str(Task.Alpha)]);
+    end
+    
+    if isempty(Task.Alpha) && isempty(Task.Beta)
         set(lblBeta,'String','');
     end
-end
+
 waitbar(4/5, h);
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
-set(lblExtremes,'string', sprintf('Alternative class objects: %d', sum(Task.ExtremeObjects)));
+set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExtremeObjects)));
 waitbar(5/5, h);
 delete(h);
 catch ME
@@ -920,26 +977,34 @@ set(btnPredictGraph,'Enable','on');
 set(btnPredictSave,'Enable','on');
 set(btnNewSetLabels,'Enable','on');
 
-if(Task.CalculateBeta)
-set(chkCalcBeta,'Value',1);
+%if(Task.CalculateBeta)
+%set(chkCalcAlpha,'Value',1);
 if ~isempty(Task.Warning)
     set(lblWarning,'String', ['Warning: ' Task.Warning]);
 else
     set(lblWarning,'String','');
 end
 
-if ~isempty(Task.Beta)
+if ~isempty(Task.Beta) && isempty(Task.Alpha)
     set(lblBeta,'String', ['Beta: ' num2str(Task.Beta)]);
-else
-    if ~isempty(Task.Alpha)
-        set(lblBeta,'String', ['Alpha: ' num2str(Task.Alpha)]);
-    else
-        set(lblBeta,'String','');
+end
+    if ~isempty(Task.Alpha) && ~isempty(Task.Beta)
+        if ~isempty(Task.Beta)
+            set(tbBeta,'String', num2str(Task.Beta));
+        end
+        set(lblBeta,'String', ['Calculated Alpha: ' num2str(Task.Alpha)]);
+        set(chkCalcAlpha, 'value', 1);
+        set(tbBeta,'Enable', 'on');
     end
-end
-else
-    set(chkCalcBeta,'Value',0);
-end
+    
+    if isempty(Task.Alpha) && isempty(Task.Beta)
+        set(lblBeta,'String','');
+        set(tbBeta,'Enable', 'off');
+    end
+
+%else
+    %set(chkCalcAlpha,'Value',0);
+%end
 
 NewSet = Task.NewSet;
 [n,m]=size(NewSet);
@@ -948,11 +1013,14 @@ Model = Task.Model;
 if ~isempty(Model)
 LoadModel();
 set(btnPredictBuild,'Enable','on');
+set(grpCurrentModelModel,'Title','Current model');
+set(grpCurrentModelPredict,'Title','Current model');
+ModelName = [];
 end
 
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
-set(lblExtremes,'string', sprintf('Alternative class objects: %d', sum(Task.ExtremeObjects)));
+set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExtremeObjects)));
 
 if (Task.ShowLabels)
 set(chkShowLabelsNew,'Value',1);
@@ -969,10 +1037,9 @@ end
 end
 end
 
-
 function btnTrainingSet_Callback(~, ~)
 
-tvar = uigetvariables({'Pick a matrix:'}, ...
+[tvar, tvarname] = uigetvariables({'Pick a matrix:'}, ...
         'InputDimensions',2, 'InputTypes',{'numeric'});
 if ~isempty(tvar)
     training_set = cell2mat(tvar);
@@ -984,14 +1051,17 @@ if ~isempty(tvar)
     
     TrainingSetLabels = [];
     set(lblTrainingSetLabels,'string', 'Not selected'); 
+    TrainingSetName = tvarname{1};
+    
+    set(btnModelGraph,'Enable','off');
+    set(btnModelGraphExtreme,'Enable','off');
+    set(btnModelSave,'Enable','off');
 end
 end
-
-
 
 function btnNewSet_Callback(~, ~)
 
-tvar = uigetvariables({'Pick a matrix:'}, ...
+[tvar, tvarname] = uigetvariables({'Pick a matrix:'}, ...
         'InputDimensions',2, 'InputTypes',{'numeric'});
 if ~isempty(tvar)
     new_set = cell2mat(tvar);
@@ -1002,10 +1072,12 @@ if ~isempty(tvar)
     if ~isempty(Model)
     set(btnPredictBuild,'Enable','on');
     set(btnPredictSave,'Enable','off');
+    set(btnPredictGraph,'Enable','off');
     end
     
     NewSetLabels = [];
     set(lblNewSetLabels,'string', 'Not selected'); 
+    NewSetName = tvarname{1};
 end
 end
 
@@ -1025,8 +1097,12 @@ set(lblSamples,'string', '');
 set(lblExtremes,'string', '');
 
 NewSetLabels = [];
+NewSetName = [];
 set(lblNewSetLabels,'string', 'Not selected'); 
 set(btnNewSetLabels,'Enable','off');
+set(tbBeta,'String', '0.01');
+set(tbBeta,'Enable', 'off');
+set(chkCalcAlpha,'value', 0);
 end
 
 function Input_NumPC(src, ~)
@@ -1048,21 +1124,30 @@ end
 
 [~,D,~] = svd(XTest);
 
-vmax = rank(D) - 1;
+if get(chkCentering,'Value') == 1
+    vmax = rank(D) - 1;
 else
-    set(src,'string','2');
-    warndlg('You should select the Training Set first!');
+    vmax = rank(D);
 end
+
 val = str2double(str);
 if isempty(val) || isnan(val)
     set(src,'string','2');
     warndlg('Input must be numerical');
 else
-    if val < 2 || val > vmax
+    if val < 1 || val > vmax
        set(src,'string','2');
-       warndlg(sprintf('Number of Principal Components should not be less than 2 or greater than %d!', vmax)); 
+       warndlg(sprintf('Number of Principal Components should be within the range [1, %d]!', vmax));
+    else
+       set(btnModelGraph,'Enable','off');
+       set(btnModelGraphExtreme,'Enable','off');
+       set(btnModelSave,'Enable','off');
     end
 end
+
+else
+    set(src,'string','2');
+    warndlg('You should select the Training Set first!');
 end
 
 end
@@ -1076,7 +1161,11 @@ if isempty(val) || isnan(val)
 else
     if val <= 0 || val >= 1
        set(src,'string','0.01');
-       warndlg('Alpha should not be greater than 1 or less than 0'); 
+       warndlg('Type I error (Alpha) should be within the range (0, 1)!');
+    else
+       set(btnModelGraph,'Enable','off');
+       set(btnModelGraphExtreme,'Enable','off');
+       set(btnModelSave,'Enable','off');
     end
 end
 end
@@ -1090,24 +1179,41 @@ if isempty(val) || isnan(val)
 else
     if val <= 0 || val >= 1
        set(src,'string','0.01');
-       warndlg('Gamma should not be greater than 1 or less than 0'); 
+       warndlg('Outlier significance (Gamma) should be within the range (0, 1)!');
+    else
+       set(btnModelGraph,'Enable','off');
+       set(btnModelGraphExtreme,'Enable','off');
+       set(btnModelSave,'Enable','off');
     end    
 end
 end
 
-% function Input_Beta(src, ~)
-% str=get(src,'String');
-% val = str2double(str);
-% if isempty(val)
-%     set(src,'string','0.01');
-%     warndlg('Input must be numerical');
-% else
-%     if val <= 0 || val > 1
-%        set(src,'string','0.01');
-%        warndlg('Beta should not be greater than 1 or less than 0'); 
-%     end
-% end
-% end
+function Input_ModelParameters(src, ~)
+val = get(src,'Value');
+if ~isempty(val) && ~isnan(val)
+    set(btnModelGraph,'Enable','off');
+    set(btnModelGraphExtreme,'Enable','off');
+    set(btnModelSave,'Enable','off');
+end
+end
+
+function Input_Beta(src, ~)
+str=get(src,'String');
+val = str2double(str);
+if isempty(val) || isnan(val)
+     set(src,'string','0.01');
+     warndlg('Input must be numerical!');
+else
+     if val <= 0 || val >= 1
+        set(src,'string','0.01');
+        warndlg('Type II error (Beta) should be within the range (0, 1)!'); 
+     end
+end
+end
+
+end
+
+
 
 
 
