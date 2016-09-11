@@ -932,6 +932,8 @@ end
 
 if (~isempty(Model.AcceptancePlotTitle))
 TrainingSetName = Model.AcceptancePlotTitle;
+set(lblTrainingSetName, 'String', sprintf('Training Set: %s', TrainingSetName));
+set(lblTrainingSetName2, 'String', sprintf('Training Set: %s', TrainingSetName));
 end
 
 end
@@ -942,7 +944,10 @@ function btnModelLoad_Callback(~, ~)
 
 [tvar, tvarname] = uigetvariables({'Pick a DDSimca object:'}, ...
         'ValidationFcn',{@(x) isa(x, 'DDSimca')});
-if ~isempty(tvar)  
+if ~isempty(tvar)
+ 
+ClearCurrentModel();    
+    
 Model = tvar{1};
 LoadModel();
 ModelName = tvarname{1};
@@ -1084,6 +1089,9 @@ end
 %else
     %set(chkCalcAlpha,'Value',0);
 %end
+ClearCurrentModel();
+set(btnPredictGraph,'Enable','on');
+set(btnPredictSave,'Enable','on');
 
 NewSet = Task.NewSet;
 [n,m]=size(NewSet);
