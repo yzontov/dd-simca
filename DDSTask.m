@@ -34,7 +34,7 @@ classdef DDSTask<handle
     %
     %OD - vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
     %
-    %ExtremeObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
+    %ExternalObjects - vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
     %
     %Transformation - transformation applied to the SD/OD on the
     %Acceptance plot, values: 'log' (default) | 'none'
@@ -78,7 +78,7 @@ classdef DDSTask<handle
       Model % DDSimca object
       SD % vector (1,n) with normalized squared Euclidian distances for objects from Training Set
       OD % vector (1,n) with normalized squared Mahalanobis distances for objects from Training Set
-      ExtremeObjects % % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
+      ExternalObjects % % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an extreme object. 
       Transformation = 'log' % transformation applied to the SD/OD on the Acceptance plot, values: 'log' (default) | 'none'
       Beta % calculated type II error
       Alpha % calculated type I error
@@ -182,7 +182,7 @@ classdef DDSTask<handle
         end
                 OD_New = DDSimca.transform_(transform, self.OD/self.Model.OD_mean);
                 SD_New = DDSimca.transform_(transform, self.SD/self.Model.SD_mean);
-                extNew = self.ExtremeObjects;
+                extNew = self.ExternalObjects;
                 %outNew = dds_result.test.outlier;
             
                 %plot(SD_New, OD_New,'ob','MarkerFaceColor','b');
@@ -234,7 +234,7 @@ v_extNew=DDSimca.extremes(v_odNew/av_od,v_sdNew/av_sd, dcrit, border_type);
 
 self.SD = v_sdNew;
 self.OD = v_odNew;
-self.ExtremeObjects = v_extNew;
+self.ExternalObjects = v_extNew;
 
 if calc_beta
     beta_res = self.beta_error(Xnew, 0);

@@ -48,8 +48,8 @@ end
 uipanel('Parent', tab_model, 'Title', 'Data sets', 'Position', [0.02   0.84   0.46  0.16]);
 uipanel('Parent', tab_model, 'Title', 'Preprocessing', 'Position', [0.02   0.71   0.46  0.12]);
 uipanel('Parent', tab_model, 'Title', 'Model parameters', 'Position', [0.02   0.3   0.46  0.39]);
-uipanel('Parent', tab_model, 'Title', 'Results and statistics', 'Position', [0.50   0.08   0.48  0.70]);
-grpCurrentModelModel = uipanel('Parent', tab_model, 'Title', 'Current model', 'Position', [0.50   0.79   0.48  0.21]);
+uipanel('Parent', tab_model, 'Title', 'Results and statistics', 'Position', [0.50   0.05   0.48  0.70]);
+grpCurrentModelModel = uipanel('Parent', tab_model, 'Title', 'Current model', 'Position', [0.50   0.76   0.48  0.24]);
 
 
 if(ispc)
@@ -169,8 +169,8 @@ end
 
 group_predict_data = uipanel('Parent', tab_predict, 'Title', 'Data set');
 set(group_predict_data, 'Position', [0.02   0.84   0.46  0.16]);
-uipanel('Parent', tab_predict, 'Title', 'Results and statistics', 'Position', [0.50   0.08   0.48  0.70]);
-grpCurrentModelPredict = uipanel('Parent', tab_predict, 'Title', 'Current model', 'Position', [0.50   0.79   0.48  0.21]);
+uipanel('Parent', tab_predict, 'Title', 'Results and statistics', 'Position', [0.50   0.05   0.48  0.70]);
+grpCurrentModelPredict = uipanel('Parent', tab_predict, 'Title', 'Current model', 'Position', [0.50   0.76   0.48  0.24]);
 
 if(ispc)
 %btnNewSet
@@ -194,7 +194,7 @@ tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Vi
     'Value',1, 'Position', [178 340 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
 
 lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 320 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
+ 'Position', [310 310 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
 
 end
 
@@ -220,16 +220,16 @@ tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Vi
     'Value',1, 'Position', [178 320 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
 
 lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 310 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
+ 'Position', [310 300 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
 
 end
 
 lblBeta = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 290 150 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 280 150 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 270 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 260 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 250 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 240 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 
 %Options
@@ -339,10 +339,10 @@ if(ispc)
 % 'Position', [160 430 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 330 160 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [310 315 160 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
- 'Position', [310 310 140 20], 'ForegroundColor', [255, 0, 0]/255); 
+ 'Position', [310 300 140 20], 'ForegroundColor', [255, 0, 0]/255); 
 
 lblCurrentAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 440 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
@@ -358,6 +358,8 @@ lblDOF_SD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 380 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblDOF_OD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [400 380 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblTrainingSetName = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 361 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 lblCurrentAlpha2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 440 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
@@ -373,6 +375,8 @@ lblDOF_SD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 380 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblDOF_OD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [400 380 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 361 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
@@ -381,52 +385,56 @@ if(ismac)
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 320 150 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [310 310 150 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
- 'Position', [310 305 140 20], 'ForegroundColor', [255, 0, 0]/255); 
+ 'Position', [310 295 140 20], 'ForegroundColor', [255, 0, 0]/255); 
 
 lblCurrentAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 425 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentPC = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [400 425 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentArea = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 405 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 407 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentEstimation = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [400 405 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [400 407 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentPreprocessing = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 385 250 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 389 250 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblDOF_SD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 365 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 369 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblDOF_OD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [400 365 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [400 369 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblTrainingSetName = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 lblCurrentAlpha2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 425 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentPC2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [400 425 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentArea2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 405 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 407 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentEstimation2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [400 405 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [400 407 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblCurrentPreprocessing2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 385 250 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 389 250 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblDOF_SD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 365 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 369 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblDOF_OD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [400 365 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [400 369 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 350 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
 lblModelSamples = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 290 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 280 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblModelExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 270 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 260 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 250 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 240 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 230 140 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 220 140 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 
 
@@ -573,6 +581,9 @@ set(lblDOF_SD,'string', sprintf('DoF (SD): %d', Model.DoF_SD));
 set(lblDOF_OD,'string', sprintf('DoF (OD): %d', Model.DoF_OD));
 set(lblDOF_SD2,'string', sprintf('DoF (SD): %d', Model.DoF_SD));
 set(lblDOF_OD2,'string', sprintf('DoF (OD): %d', Model.DoF_OD));
+set(lblTrainingSetName,'string', sprintf('Training Set: %s', Model.AcceptancePlotTitle));
+set(lblTrainingSetName2,'string', sprintf('Training Set: %s', Model.AcceptancePlotTitle));
+
 
 set(grpCurrentModelModel,'Title', 'Current model');
 set(grpCurrentModelPredict,'Title', 'Current model');
@@ -621,10 +632,16 @@ prompt = {'Enter result name:'};
 dlg_title = 'Save model';
 num_lines = 1;
 def = {'DDS_TASK'};
+
 answer = inputdlg(prompt,dlg_title,num_lines,def);
 
 if ~isempty(answer)
-assignin('base',answer{1},Task)
+try
+assignin('base', answer{1}, Task)
+catch
+  errordlg('The invalid characters have been replaced. Please use only latin characters, numbers and underscore!');
+  assignin('base',regexprep(answer{1}, '[^a-zA-Z0-9_]', '_'),Task);  
+end
 end
 
 end
@@ -640,7 +657,12 @@ def = {'DD_SIMCA'};
 answer = inputdlg(prompt,dlg_title,num_lines,def);
 
 if ~isempty(answer)
-assignin('base',answer{1},Model)
+try
+assignin('base', answer{1}, Model)
+catch
+  errordlg('The invalid characters have been replaced. Please use only latin characters, numbers and underscore!');
+  assignin('base',regexprep(answer{1}, '[^a-zA-Z0-9_]', '_'), Model);  
+end
 end
 
 end
@@ -710,6 +732,57 @@ if ~isempty(tvar)
     end
 end   
      
+    
+end
+
+function ClearCurrentModel()
+
+set(btnPredictGraph,'Enable','off');
+set(btnPredictSave,'Enable','off');
+
+set(lblWarning,'String','');
+set(lblBeta,'String','');
+
+set(lblSamples,'string', '');
+set(lblExtremes,'string', '');
+    
+set(lblHasTrainingExtremes,'Visible','off');
+set(lblHasTrainingOutliers,'Visible','off');    
+    
+Model = [];
+ModelName = [];
+set(btnPredictBuild,'Enable','off');
+
+set(grpCurrentModelModel,'Title', 'Current model');
+set(grpCurrentModelPredict,'Title', 'Current model');
+
+set(lblWarning,'String','');
+set(lblBeta,'String','');
+
+set(lblModelSamples,'string', '');
+set(lblModelExtremes,'string', '');
+set(lblModelOutliers,'string', '');
+set(lblModelCalculatedAlpha,'string', '');
+
+set(lblCurrentAlpha,'string', '');
+set(lblCurrentPC,'string', '');
+set(lblCurrentArea,'string', '');
+set(lblCurrentEstimation,'string', '');
+set(lblCurrentPreprocessing,'string', '');
+
+set(lblCurrentAlpha2,'string', '');
+set(lblCurrentPC2,'string', '');
+set(lblCurrentArea2,'string', '');
+set(lblCurrentEstimation2,'string', '');
+set(lblCurrentPreprocessing2,'string', '');
+
+set(lblDOF_SD,'string', '');
+set(lblDOF_OD,'string', '');
+set(lblDOF_SD2,'string', '');
+set(lblDOF_OD2,'string', '');
+
+set(lblTrainingSetName,'string', '');
+set(lblTrainingSetName2,'string', '');
     
 end
 
@@ -844,6 +917,8 @@ set(lblDOF_SD,'string', sprintf('DoF (SD): %d', Model.DoF_SD));
 set(lblDOF_OD,'string', sprintf('DoF (OD): %d', Model.DoF_OD));
 set(lblDOF_SD2,'string', sprintf('DoF (SD): %d', Model.DoF_SD));
 set(lblDOF_OD2,'string', sprintf('DoF (OD): %d', Model.DoF_OD));
+set(lblTrainingSetName,'string', sprintf('Training Set: %s', Model.AcceptancePlotTitle));
+set(lblTrainingSetName2,'string', sprintf('Training Set: %s', Model.AcceptancePlotTitle));
 
 if Model.AutoAlpha
     set(tbAlpha,'Enable','off');
@@ -878,9 +953,19 @@ end
 end
 
 function btnModelClear_Callback(~, ~)
-%set(lblHasModel,'Visible','off');     
-set(lblHasTrainingExtremes,'Visible','off');
-set(lblHasTrainingOutliers,'Visible','off');
+
+    set(tbNumPC,'string', '2');
+set(tbAlpha,'string', '0.01');
+set(tbGamma,'string', '0.01');
+
+set(ddlArea,'value', 1);
+set(ddlEstimation,'value', 1);
+
+set(chkCentering,'Value',0);
+set(chkScaling,'Value',0);
+
+    %set(lblHasModel,'Visible','off');     
+
 
 set(btnModelBuild,'Enable','off');
 set(btnModelGraph,'Enable','off');
@@ -894,48 +979,8 @@ TrainingSetName = [];
 set(lblTrainingSetLabels,'string', 'Not selected'); 
 set(btnTrainingSetLabels,'Enable','off');
 
-Model = [];
-ModelName = [];
-set(btnPredictBuild,'Enable','off');
-
-set(grpCurrentModelModel,'Title', 'Current model');
-set(grpCurrentModelPredict,'Title', 'Current model');
-
-set(tbNumPC,'string', '2');
-set(tbAlpha,'string', '0.01');
-set(tbGamma,'string', '0.01');
-
-set(ddlArea,'value', 1);
-set(ddlEstimation,'value', 1);
-
-set(chkCentering,'Value',0);
-set(chkScaling,'Value',0);
-
-set(lblWarning,'String','');
-set(lblBeta,'String','');
-
-set(lblModelSamples,'string', '');
-set(lblModelExtremes,'string', '');
-set(lblModelOutliers,'string', '');
-set(lblModelCalculatedAlpha,'string', '');
-
-set(lblCurrentAlpha,'string', '');
-set(lblCurrentPC,'string', '');
-set(lblCurrentArea,'string', '');
-set(lblCurrentEstimation,'string', '');
-set(lblCurrentPreprocessing,'string', '');
-
-set(lblCurrentAlpha2,'string', '');
-set(lblCurrentPC2,'string', '');
-set(lblCurrentArea2,'string', '');
-set(lblCurrentEstimation2,'string', '');
-set(lblCurrentPreprocessing2,'string', '');
-
-set(lblDOF_SD,'string', '');
-set(lblDOF_OD,'string', '');
-set(lblDOF_SD2,'string', '');
-set(lblDOF_OD2,'string', '');
-
+ClearCurrentModel();
+    
 end
 
 function btnPredictBuild_Callback(~, ~)
@@ -975,7 +1020,7 @@ end
 waitbar(4/5, h);
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
-set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExtremeObjects)));
+set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExternalObjects)));
 waitbar(5/5, h);
 delete(h);
 catch ME
@@ -1054,7 +1099,7 @@ end
 
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
-set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExtremeObjects)));
+set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExternalObjects)));
 
 if (Task.ShowLabels)
 set(chkShowLabelsNew,'Value',1);
@@ -1094,6 +1139,8 @@ if ~isempty(tvar)
     set(btnModelGraph,'Enable','off');
     set(btnModelGraphExtreme,'Enable','off');
     set(btnModelSave,'Enable','off');
+    
+    ClearCurrentModel();
 end
 end
 
@@ -1146,7 +1193,7 @@ end
 function Input_NumPC(src, ~)
 str=get(src,'String');
 if(~isempty(TrainingSet))
-min(size(TrainingSet));
+
 XTest = TrainingSet;
 if get(chkCentering,'Value') == 1
 mean_ = mean(TrainingSet);
@@ -1164,7 +1211,6 @@ end
 
 vmax = rank(D);
 
-
 val = str2double(str);
 if isempty(val) || isnan(val)
     set(src,'string','2');
@@ -1172,11 +1218,13 @@ if isempty(val) || isnan(val)
 else
     if val < 1 || val > vmax
        set(src,'string','2');
-       warndlg(sprintf('Number of Principal Components should be greater than 1 and less than %d!', vmax));
+       warndlg(sprintf('Number of Principal Components should be greater than 0 and less than %d!', vmax+1));
     else
        set(btnModelGraph,'Enable','off');
        set(btnModelGraphExtreme,'Enable','off');
        set(btnModelSave,'Enable','off');
+       
+       ClearCurrentModel();
     end
 end
 
@@ -1201,6 +1249,8 @@ else
        set(btnModelGraph,'Enable','off');
        set(btnModelGraphExtreme,'Enable','off');
        set(btnModelSave,'Enable','off');
+       
+       ClearCurrentModel();
     end
 end
 end
@@ -1219,6 +1269,8 @@ else
        set(btnModelGraph,'Enable','off');
        set(btnModelGraphExtreme,'Enable','off');
        set(btnModelSave,'Enable','off');
+       
+       ClearCurrentModel();
     end    
 end
 end
@@ -1229,6 +1281,8 @@ if ~isempty(val) && ~isnan(val)
     set(btnModelGraph,'Enable','off');
     set(btnModelGraphExtreme,'Enable','off');
     set(btnModelSave,'Enable','off');
+    
+    ClearCurrentModel();
 end
 end
 

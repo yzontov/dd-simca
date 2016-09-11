@@ -260,13 +260,15 @@ classdef  DDSimca<handle
             self.TrainingSet_ = value;
             
             if self.Centering == true
-                self.TrainingSet_mean = mean(self.TrainingSet);
+                self.TrainingSet_mean = mean(self.TrainingSet_);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
             end
             
             if self.Scaling == true
-                self.TrainingSet_std = std(self.TrainingSet,1,1);
-                self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
+                temp = std(self.TrainingSet_,0,1);
+                temp(temp == 0) = 1;
+                self.TrainingSet_std = temp;
+                self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, temp);
             end
             
             self.dds_process();
@@ -280,12 +282,12 @@ classdef  DDSimca<handle
             self.TrainingSet_ = self.TrainingSet;
             
             if self.Centering == true
-                self.TrainingSet_mean = mean(self.TrainingSet);
+                self.TrainingSet_mean = mean(self.TrainingSet_);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
             end
             
             if self.Scaling == true
-                temp = std(self.TrainingSet,0,1);
+                temp = std(self.TrainingSet_,0,1);
                 temp(temp == 0) = 1;
                 self.TrainingSet_std = temp;
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
@@ -302,12 +304,12 @@ classdef  DDSimca<handle
             self.TrainingSet_ = self.TrainingSet;
             
             if self.Centering == true
-                self.TrainingSet_mean = mean(self.TrainingSet);
+                self.TrainingSet_mean = mean(self.TrainingSet_);
                 self.TrainingSet_ = bsxfun(@minus, self.TrainingSet_, self.TrainingSet_mean);
             end
             
             if self.Scaling == true
-                temp = std(self.TrainingSet,0,1);
+                temp = std(self.TrainingSet_,0,1);
                 temp(temp == 0) = 1;
                 self.TrainingSet_std = temp;
                 self.TrainingSet_ = bsxfun(@rdivide, self.TrainingSet_, self.TrainingSet_std);
@@ -812,7 +814,7 @@ classdef  DDSimca<handle
             n = dof;
             
             if n<=0 || p<0 || p>1
-                error('!!!');
+                error('wrong probability value!!');
             end
             
             if p==0
@@ -829,7 +831,7 @@ classdef  DDSimca<handle
             dTemp1=2/9/n;
             dTemp=1-dTemp1+z*sqrt(dTemp1);
             
-            if dTemp1>0
+            if dTemp>0
                 dTemp1=dTemp*dTemp*dTemp;
                 f=n*dTemp1;
             else
@@ -837,9 +839,12 @@ classdef  DDSimca<handle
                 dTemp=dTemp1*dTemp1;
                 f=0.5*dTemp;
             end
+            if(f < 0)
+                error('!!!');
+            end
             
             p1 = DDSimca.chi2cdf_(f, n);
-            if p1 == p
+            if (abs(p1 - p) < 1e-8)
                 r = f;
                 return;
             end
@@ -861,7 +866,7 @@ classdef  DDSimca<handle
                 flag = (p1-p)*h<0;
             end
             
-            if p1==p
+            if (abs(p1 - p) < 1e-8)
                 r = z;
                 return;
             end
