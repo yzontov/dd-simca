@@ -471,6 +471,7 @@ try
 numPC = str2double(get(tbNumPC,'string'));
 Model = DDSimca(TrainingSet, numPC);
 Model.AcceptancePlotTitle = TrainingSetName;
+Model.Labels = TrainingSetLabels;
 waitbar(1/10, h);
 Model.Gamma = str2double(get(tbGamma,'string'));
 waitbar(2/10, h);
@@ -994,6 +995,7 @@ try
 
 Task = DDSTask(Model, NewSet);
 Task.AcceptancePlotTitle = NewSetName;
+Task.Labels = NewSetLabels;
 
 if get(chkCalcAlpha,'Value')
     Task.CalculateBeta = ~get(chkCalcAlpha,'Value');
@@ -1159,18 +1161,34 @@ function btnNewSet_Callback(~, ~)
 if ~isempty(tvar)
     new_set = cell2mat(tvar);
     [n,m]=size(new_set);
+    
+    ok = 0;
+    
+    if ~isempty(Model)
+
+    [~,m_training]=size(TrainingSet);
+    
+    if (m ~= m_training)
+        ok = 1;
+        warndlg('The number of variables must be the same in the training and new arrays!');
+    else
+        ok = 2;
+        set(btnPredictBuild,'Enable','on');
+        set(btnPredictSave,'Enable','off');
+        set(btnPredictGraph,'Enable','off'); 
+    end
+
+    end
+    
+    if (ok == 0 || ok == 2)
     set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
     NewSet = new_set;
     set(btnNewSetLabels,'Enable','on');
-    if ~isempty(Model)
-    set(btnPredictBuild,'Enable','on');
-    set(btnPredictSave,'Enable','off');
-    set(btnPredictGraph,'Enable','off');
-    end
     
     NewSetLabels = [];
     set(lblNewSetLabels,'string', 'Not selected'); 
     NewSetName = tvarname{1};
+    end
 end
 end
 
