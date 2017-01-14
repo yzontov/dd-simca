@@ -421,7 +421,7 @@ classdef  DDSimca<handle
             if ~isempty(self.OutlierObjects)
                 extTraining = self.ExtremeObjects;
                 outTraining = self.OutlierObjects;
-                regular = plot(sD(extTraining == 0 | outTraining == 0),oD(extTraining == 0 | outTraining == 0),'og','MarkerFaceColor','g');
+                regular = plot(sD(~(extTraining + outTraining)),oD(~(extTraining + outTraining)),'og','MarkerFaceColor','g');
                 extreme = plot(sD(extTraining == 1),oD(extTraining == 1),'s','Color',[1 0.65 0],'MarkerFaceColor',[1 0.65 0]);
                 outlier = plot(sD(outTraining == 1),oD(outTraining == 1),'rs','MarkerFaceColor','r');
                 if sum(extTraining == 1) > 0 && sum(outTraining == 1) > 0
@@ -491,9 +491,15 @@ classdef  DDSimca<handle
             
             handle = figure;
             
-            set(handle,'name','Extreme plot','numbertitle','off');
+            if isempty(self.AcceptancePlotTitle)
+                set(handle,'name','Extreme plot','numbertitle','off');
+                title('Extreme plot', 'FontWeight', 'bold');
+            else
+                set(handle,'name',sprintf('Extreme plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
+                title(sprintf('Extreme plot. Training set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold');
+            end
             hold on;
-            title('Extreme plot', 'FontWeight', 'bold');
+
             xlabel('Expected', 'FontWeight', 'bold');
             ylabel('Observed', 'FontWeight', 'bold');
             
