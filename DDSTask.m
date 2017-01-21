@@ -158,7 +158,7 @@ classdef DDSTask<handle
                 title('Acceptance plot. New set', 'FontWeight', 'bold');
             else
                 set(handle,'name',sprintf('Acceptance plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
-                title(sprintf('Acceptance plot. New set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold');
+                title(sprintf('Acceptance plot. New set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold', 'Interpreter', 'none');
             end
             
             hold on;
@@ -196,7 +196,7 @@ classdef DDSTask<handle
                     end
                     
                      dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
-                     text(SD_New+dx, OD_New+dy, labels);
+                     text(SD_New+dx, OD_New+dy, labels, 'Interpreter', 'none');
                 end
             
 

@@ -386,7 +386,7 @@ classdef  DDSimca<handle
                 title('Acceptance plot. Training set', 'FontWeight', 'bold');
             else
                 set(handle,'name',sprintf('Acceptance plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
-                title(sprintf('Acceptance plot. Training set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold');
+                title(sprintf('Acceptance plot. Training set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold', 'Interpreter', 'none');
             end
             
             hold on;
@@ -457,7 +457,7 @@ classdef  DDSimca<handle
                     end
                     
                      dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
-                     text(sD+dx, oD+dy, labels);
+                     text(sD+dx, oD+dy, labels, 'Interpreter', 'none');
             end
             
             hold off;
@@ -496,7 +496,7 @@ classdef  DDSimca<handle
                 title('Extreme plot', 'FontWeight', 'bold');
             else
                 set(handle,'name',sprintf('Extreme plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
-                title(sprintf('Extreme plot. Training set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold');
+                title(sprintf('Extreme plot. Training set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold', 'Interpreter', 'none');
             end
             hold on;
 
