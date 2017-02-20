@@ -1,7 +1,7 @@
 Data-Driven SIMCA Tool 
 ===========================================
 
-DDSimca is a Matlab tool which implements the [Data-Driven SIMCA](http://onlinelibrary.wiley.com/doi/10.1002/cem.2506/full) method. It also provides means for preprocessing and visual analysis of [chemometric](http://en.wikipedia.org/wiki/Chemometrics) data. The tool is build using object-oriented approach and consists of several Matlab classes, thus it can be applied in a Matlab script. It also provdes a graphical user interface (GUI) which simplifies the use of the tool. The tool was first presented at the [Tenth Winter Symposium on Chemometrics (WSC-10)](http://wsc.chemometrics.ru/wsc10/).
+DDSimca is a Matlab tool which implements the [Data-Driven SIMCA](http://onlinelibrary.wiley.com/doi/10.1002/cem.2506/full) method. The tool is build using object-oriented approach and consists of several Matlab classes, thus it can be applied in a Matlab script. It provides a graphical user interface (GUI) which simplifies the analysis. The tool was first presented at the [Tenth Winter Symposium on Chemometrics (WSC-10)](http://wsc.chemometrics.ru/wsc10/).
 
 
 How to install
