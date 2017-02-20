@@ -24,11 +24,12 @@ f = figure;
 set(f,'Visible','off');
 set(f, 'MenuBar', 'none');
 set(f, 'ToolBar', 'none');
-set(f,'name','DD-SIMCA Toolbox','numbertitle','off');
+set(f,'name','DD-SIMCA Tool','numbertitle','off');
 set(f, 'Resize', 'off');
 set(f, 'Position', [100 100 600 500]);
 
 mh = uimenu(f,'Label','Help');
+uimenu(mh,'Label','Help on DDSGUI','Callback', @DDSGUIHelp_Callback);
 uimenu(mh,'Label','Help on DDSimca class','Callback', @DDSimcaHelp_Callback);
 uimenu(mh,'Label','Help on DDSTask class','Callback', @DDSTaskHelp_Callback);
 
@@ -439,6 +440,10 @@ lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'Strin
 
 
 set(f,'Visible','on');
+
+function DDSGUIHelp_Callback(~, ~)
+ web('help/index.html')
+end
 
 function DDSimcaHelp_Callback(~, ~)
  doc DDSimca

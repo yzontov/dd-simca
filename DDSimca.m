@@ -2,11 +2,11 @@ classdef  DDSimca<handle
     %
     %DDSimca class is the implementation of DD-SIMCA
     %method in Matlab scripting language and is part of
-    %DD-SIMCA Toolbox.
+    %DD-SIMCA Tool.
     %
     %The software was successfully tested on MATLAB R2010a and R2015b
     %on Microsoft Windows and R2014b on Mac OS.
-    %The Toolbox relies on own implementation of various statistical
+    %The Tool relies on own implementation of various statistical
     %functions and thus may be used without the MATLAB Statistics Toolbox.
     %
     %The parameters of the model is initially calculated in the constructor

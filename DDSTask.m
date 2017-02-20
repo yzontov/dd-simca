@@ -1,6 +1,6 @@
 classdef DDSTask<handle
     %
-    %DDSTask class is part of DDSimca Toolbox and
+    %DDSTask class is part of DDSimca Tool and
     %is intended for testing of new classes of samples 
     %using a previously created DD-SIMCA model
     %and calculation of type II error Beta
