@@ -17,19 +17,19 @@
 </p>
 <h2>Description</h2>
 <p>The GUI window is separated into 3 tabs: Model, Prediction and Options. 
-<br/>The main tab is the <b>Model tab</b>. It contains the user controls for input of the training data set, adjusting the model's parameters and viewing and saving the results. The user controls on the tab are grouped into several sections based on their purpose and importance.
+<br/>The main tab is the <b>Model tab</b>. The user controls on the tab allow to input the training data, set the model parameters as well as to view and save the results. 
 <br/>
-On the <b>Prediction tab</b> the user my apply the DD-SIMCA model to the new data set. The selection of the new data set variable and the labels is analogous to the Model tab. The "Decide" button applies the current model to the new data set.
+On the <b>Prediction tab</b> the user my apply the DD-SIMCA model to the new data set. The selection of the new data set variable and the labels is analogous to the Model tab. Click the <b>Decide</b> button to apply the currently loaded model to the new samples.
 </p>
 <h2>Examples</h2>
 <h3>Working with the Model tab</h3>
 <p>
 To build a DD-SIMCA model:
 <ol>
-<li>On the Model tab click the <b>Training Set</b> button.</li>
+<li>On the <b>Model</b> tab click the <b>Training Set</b> button.</li>
 <li>In the modal window select the matrix containing the training set.</li>
 <li>Optionally click the <b>Labels</b> button to select the cell array of strings for names of samples in the data set.</li>
-<li>Adjust the parameters of the model. It is possible to indicate a value of a type I error or switch to automatic calculation by checking the Auto checkbox</li>
+<li>Adjust the parameters of the model. It is possible to indicate a value of a type I error or switch to automatic calculation by checking the <b>Auto checkbox</b></li>
 <li>Click the <b>Build</b> button to create the model.</li>
 <li>The results are now available in the <i>Current model</i> and <i>Results and statistics</i> sections.</li>
 <li>Click on the <b>Acceptance plot</b> and <b>Extreme plot</b> buttons to study the results visually.</li>
@@ -67,7 +67,7 @@ To apply a DD-SIMCA model to the new data:
 <br/>
 <i>Here we assume that a model was previously created or loaded into the GUI by the Model tab.</i>
 <ol>
-<li>On the Prediction tab click the <b>New Set</b> button.</li>
+<li>On the <b>Prediction</b> tab click the <b>New Set</b> button.</li>
 <li>In the modal window select the matrix containing the new data set.</li>
 <li>Optionally click the <b>Labels</b> button to select the cell array of strings for names of samples in the data set.</li>
 <li>By default a type II error is estimated for the new data set. It is possible to switch to a type I error calculation based on the predefined type II error.</li>
