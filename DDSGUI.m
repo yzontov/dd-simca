@@ -61,7 +61,7 @@ uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Training Set',.
 lblTrainingSet = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [20 402 100 15]) ;
 
-btnTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Labels',...
+btnTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 420 100 30], 'callback', @btnTrainingSetLabels_Callback,'Enable','off');
 lblTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [160 402 100 15]) ;
@@ -107,7 +107,7 @@ ddlEstimation = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {
 
 end
 
-if(ismac)
+if(ismac||isunix)
 %data
 %btnTrainingSet
 uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Training Set',...
@@ -115,7 +115,7 @@ uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Training Set',.
 lblTrainingSet = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [20 392 100 15]) ;
 
-btnTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Labels',...
+btnTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 410 100 30], 'callback', @btnTrainingSetLabels_Callback,'Enable','off');
 lblTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [160 392 100 15]) ;
@@ -180,7 +180,7 @@ uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [20 402 100 15]) ;
 
-btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Labels',...
+btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 420 100 30], 'callback', @btnNewSetLabels_Callback,'Enable','off');
 lblNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [160 402 100 15]) ;
@@ -199,14 +199,14 @@ lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
 
 end
 
-if(ismac)
+if(ismac||isunix)
 %btnNewSet
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
     'Position', [20 410 100 30], 'callback', @btnNewSet_Callback);
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [20 392 100 15]) ;
 
-btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Labels',...
+btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 410 100 30], 'callback', @btnNewSetLabels_Callback,'Enable','off');
 lblNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [160 392 100 15]) ;
@@ -257,7 +257,7 @@ chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'Strin
     'Position', [300 400 200 30], 'Value', 1);
 end
 
-if(ismac)
+if(ismac||isunix)
 %lblAxesTransform
 uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'Axes transformation', ...
  'Position', [20 410 100 15]); 
@@ -303,7 +303,7 @@ uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Clear',...
 
 end
 
-if(ismac)
+if(ismac||isunix)
 btnModelBuild = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Build',...
     'Position', [20 100 100 30], 'callback', @btnModelBuild_Callback,'Enable','off');
 btnModelGraph = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Acceptance plot',...
@@ -360,7 +360,7 @@ lblDOF_SD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
 lblDOF_OD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [400 380 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblTrainingSetName = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 361 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 361 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 lblCurrentAlpha2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 440 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
@@ -377,11 +377,11 @@ lblDOF_SD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
 lblDOF_OD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [400 380 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 361 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 361 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
-if(ismac)
+if(ismac||isunix)
 %lblHasModel = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Model created', ...
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
@@ -406,7 +406,7 @@ lblDOF_SD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
 lblDOF_OD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [400 369 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblTrainingSetName = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
- 'Position', [310 350 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 350 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 lblCurrentAlpha2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 425 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
@@ -423,7 +423,7 @@ lblDOF_SD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
 lblDOF_OD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [400 369 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
- 'Position', [310 350 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+ 'Position', [310 350 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
 end
 
@@ -695,8 +695,15 @@ end
 
 function btnNewSetLabels_Callback(~, ~)
 
- tvar = uigetvariables({'Pick a cell array of strings:'}, ...
-        'InputDimensions',1, 'InputTypes',{'string'});
+    n_new = 0;
+ if ~isempty(NewSet)
+     [n_new,~]=size(NewSet);
+ end   
+    
+ tvar = uigetvariables({'Pick a cell array of strings:'},'InputDimensions',1, ...
+     'ValidationFcn',{@(x) iscellstr(x) && (n_new > 0 && size(x,1) == n_new || n_new == 0)});
+        %'InputDimensions',1, 'InputTypes',{'string'});
+        
 if ~isempty(tvar)
     labels = tvar{1};
     [n,m]=size(labels);
@@ -719,8 +726,15 @@ end
 
 function btnTrainingSetLabels_Callback(~, ~)
 
- tvar = uigetvariables({'Pick a cell array of strings:'}, ...
-        'InputDimensions',1, 'InputTypes',{'string'});
+    n_training = 0;
+ if ~isempty(TrainingSet)
+     [n_training,~]=size(TrainingSet);
+ end   
+    
+ tvar = uigetvariables({'Pick a cell array of strings:'},'InputDimensions',1, ...
+     'ValidationFcn',{@(x) iscellstr(x) && (n_training > 0 && size(x,1) == n_training || n_training == 0)});
+        %'InputDimensions',1, 'InputTypes',{'string'});
+        
 if ~isempty(tvar)
     labels = tvar{1};
     [n,m]=size(labels);
@@ -1138,7 +1152,7 @@ end
 function btnTrainingSet_Callback(~, ~)
 
 [tvar, tvarname] = uigetvariables({'Pick a matrix:'}, ...
-        'InputDimensions',2, 'InputTypes',{'numeric'});
+     'InputDimensions',2, 'InputTypes',{'numeric'});
 if ~isempty(tvar)
     training_set = cell2mat(tvar);
     [n,m]=size(training_set);
@@ -1161,8 +1175,15 @@ end
 
 function btnNewSet_Callback(~, ~)
 
-[tvar, tvarname] = uigetvariables({'Pick a matrix:'}, ...
-        'InputDimensions',2, 'InputTypes',{'numeric'});
+    m_training = 0;
+ if ~isempty(TrainingSet)
+     [~,m_training]=size(TrainingSet);
+ end
+    
+    
+[tvar, tvarname] = uigetvariables({'Pick a matrix:'},'InputDimensions',2, ...
+    'ValidationFcn',{@(x) isnumeric(x) && (m_training > 0 && size(x,2) == m_training || m_training == 0)});
+        %'InputDimensions',2, 'InputTypes',{'numeric'});
 if ~isempty(tvar)
     new_set = cell2mat(tvar);
     [n,m]=size(new_set);

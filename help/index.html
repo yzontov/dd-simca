@@ -17,32 +17,15 @@
 </p>
 <h2>Description</h2>
 <p>The GUI window is separated into 3 tabs: Model, Prediction and Options. 
-<<<<<<< HEAD
-<br/>The main tab is the <b>Model tab</b>. It contains the user controls for input of the training data set, adjusting the model's parameters and viewing and saving the results. The user controls on the tab are grouped into several sections based on their purpose and importance.
-<br/>
-On the <b>Prediction tab</b> the user my apply the DD-SIMCA model to the new data set. The selection of the new data set variable and the labels is analogous to the Model tab. The "Decide" button applies the current model to the new data set.
-=======
 <br/>The main tab is the <b>Model tab</b>. The user controls on the tab allow to input the training data, set the model parameters as well as to view and save the results. 
 <br/>
 On the <b>Prediction tab</b> the user my apply the DD-SIMCA model to the new data set. The selection of the new data set variable and the labels is analogous to the Model tab. Click the <b>Decide</b> button to apply the currently loaded model to the new samples.
->>>>>>> master
 </p>
 <h2>Examples</h2>
 <h3>Working with the Model tab</h3>
 <p>
 To build a DD-SIMCA model:
 <ol>
-<<<<<<< HEAD
-<li>On the Model click the <b>Training Set</b> button.</li>
-<li>In the modal window select the matrix containing the training set.</li>
-<li>Optionally click the <b>Labels</b> button to select the cell array of strings for names of samples in the data set.</li>
-<li>Adjust the parameters of the model. It is possible to indicate a value of type I error or swich to automatic calculation by checking the Auto checkbox</li>
-<li>Click the <b>Build</b> button to create the model.</li>
-<li>The results are now available in the <i>Current model</i> and <i>Results</i> and statistics sections.</li>
-<li>Click on the <b>Acceptance plot</b> and <b>Extreme plot</b> buttons to study the results visually.</li>
-<li>To get complete modelling results stored in a DDSimca object click the <b>Save model</b> button and select aname the new model. It will be created in the Matlab workspace.</li>
-<li>You should save your current workspace to a <b>.mat</b> file to preserve the results. Later you can load the <b>.mat</b> file into the Matlab workspace and resume working with the model by cliking on the <b>Load model</b> button.</li>
-=======
 <li>On the <b>Model</b> tab click the <b>Training Set</b> button.</li>
 <li>In the modal window select the matrix containing the training set.</li>
 <li>Optionally click the <b>Labels</b> button to select the cell array of strings for names of samples in the data set.</li>
@@ -52,31 +35,11 @@ To build a DD-SIMCA model:
 <li>Click on the <b>Acceptance plot</b> and <b>Extreme plot</b> buttons to study the results visually.</li>
 <li>To get complete modelling results collected in a DDSimca object click the <b>Save model</b> button and select a name of the new model. It will be created in the Matlab workspace.</li>
 <li>You can save your current workspace to a <b>.mat</b> file to preserve the results. Later on you can load the <b>.mat</b> file into the Matlab workspace and resume working with the model by clicking on the <b>Load model</b> button.</li>
->>>>>>> master
 <li>Click the <b>Clear</b> button to reset all the setting to default and to remove the current model.</li>
 </ol>
 </p>
 <figure style="text-align:center;">
   <img src="model.png" alt="Model tab." height="500" width="500">
-<<<<<<< HEAD
-  <figcaption>Model tab.</figcaption>
-</figure>
-<hr/>
-<h3>Visual analysis of model data</h3>
-<p>
-The tool provides two visual representations of the classification results - the Acceptance and the Extreme plots. 
-</p>
-<figure style="text-align:center;">
-  <img src="accept_training.png" alt="Acceptance plot for model data" height="500" width="500">
-  <figcaption>Acceptance plot for model data.</figcaption>
-</figure>
-<p>
-The Acceptance plot for the model data shows the acceptance (<b>green</b> line) and outlier areas (<b>red</b> line). The samples are separated into 3 possible categories: regular (<b>green</b> dot), extreme (<b>yellow</b> dot) and outlier (<b>red</b> dot). The goal of the Acceptance plot for the training set is to assist in creating a good model and to remove the outliers.
-</p>
-<figure style="text-align:center;">
-  <img src="extreme.png" alt="Extreme plot" height="500" width="500">
-  <figcaption>Extreme plot.</figcaption>
-=======
   <figcaption>Model tab</figcaption>
 </figure>
 <hr/>
@@ -94,7 +57,6 @@ The Acceptance plot for the training data shows the acceptance (<span style="col
 <figure style="text-align:center;">
   <img src="extreme.png" alt="Extreme plot" height="500" width="500">
   <figcaption>Extreme plot</figcaption>
->>>>>>> master
 </figure>
 <p>
 The Extreme plot allows to check whether the training set contains outlier samples. A sample may be considered a possible outlier if it appears outside the tolerance interval on the Extreme plot.
@@ -103,19 +65,6 @@ The Extreme plot allows to check whether the training set contains outlier sampl
 <h3>Working with the Prediction tab</h3>
 To apply a DD-SIMCA model to the new data:
 <br/>
-<<<<<<< HEAD
-<i>Here we assume that a model was previously created or loaded into the GUI on the Model tab.</i>
-<ol>
-<li>On the Prediction click the <b>New Set</b> button.</li>
-<li>In the modal window select the matrix containing the new data set.</li>
-<li>Optionally click the <b>Labels</b> button to select the cell array of strings for names of samples in the data set.</li>
-<li>By default a type II error is estimated for the new data set. It is possible switch to type I error calculation based on the provided II error.</li>
-<li>Click the <b>Decide</b> button to apply the model to the new data set.</li>
-<li>The results are now available in the <i>Results and statistics</i> sections. </li>
-<li>Click on the <b>Acceptance plot</b> to study the results visually.</li>
-<li>To get the results stored in a DDSTask object click the <b>Save results</b> button and select a name. It will be created in the Matlab workspace. Note that the DDSTask object contains all the data related to the analysis task including the data sets as well as the related DDSimca model object.</li>
-<li>You should save your current workspace to a <b>.mat</b> file to preserve the results. Later you can load the <b>.mat</b> file into the Matlab workspace and resule the analysis by cliking on the <b>Load results</b> button.</li>
-=======
 <i>Here we assume that a model was previously created or loaded into the GUI by the Model tab.</i>
 <ol>
 <li>On the <b>Prediction</b> tab click the <b>New Set</b> button.</li>
@@ -127,33 +76,15 @@ To apply a DD-SIMCA model to the new data:
 <li>Click on the <b>Acceptance plot</b> to study the results visually.</li>
 <li>To get the results stored in a DDSTask object click the <b>Save results</b> button and select a name. It will be created in the Matlab workspace. Note that the DDSTask object contains all the data related to the analyzed task including the data sets as well as the related DDSimca model object.</li>
 <li>You can save your current workspace to a <b>.mat</b> file to preserve the results. Later on you can load the <b>.mat</b> file into the Matlab workspace and resume the analysis by cliking on the <b>Load results</b> button.</li>
->>>>>>> master
 <li>Click the <b>Clear</b> button to reset all the setting to default and to remove the current model.</li>
 </ol>
 <figure style="text-align:center;">
   <img src="prediction.png" alt="Prediction tab" height="500" width="500">
-<<<<<<< HEAD
-  <figcaption>Prediction tab.</figcaption>
-=======
   <figcaption>Prediction tab</figcaption>
->>>>>>> master
 </figure>
 <h3>Visual analysis of new data</h3>
 <figure style="text-align:center;">
   <img src="accept_new.png" alt="Acceptance plot for new data" height="500" width="500">
-<<<<<<< HEAD
-  <figcaption>Acceptance plot for new data.</figcaption>
-</figure>
-<p>
-The Acceptance plot for the new data set shows the acceptance (<span style="color:green;">green</span> line) area. The samples are separated into 2 possible categories: regular (<b style="color:green;">green</b> dot) and extreme (<b style="color:red;">red</b> dot). The goal of the Acceptance plot for the new data set is find the samples which do or do not correspond to the target class of object.
-</p>
-<hr/>
-<h3>Working with the Options tab</h3>
-The <b>Options tab</b> contains the visualization setting for the Acceptance plot, such a axes transformation and sample names.
-<figure style="text-align:center;">
-  <img src="options.png" alt="Options tab" height="200" width="500">
-  <figcaption>Options tab.</figcaption>
-=======
   <figcaption>Acceptance plot for new data</figcaption>
 </figure>
 <p>
@@ -165,7 +96,6 @@ The <b>Options tab</b> contains the visualization setting for the Acceptance plo
 <figure style="text-align:center;">
   <img src="options.png" alt="Options tab" height="200" width="600">
   <figcaption>Options tab</figcaption>
->>>>>>> master
 </figure>
 <hr/>
 <h3>References</h3>

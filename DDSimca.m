@@ -953,63 +953,49 @@ classdef  DDSimca<handle
             %form vector with "1" if a sample located out of the acceptance area and "0" for
             %regular samples
             %----------------------------------------------
-            n = size(v_od, 1);
-            v_samp=zeros(n,1);
-            sd_Crit=dbord(1);
-            od_Crit=dbord(2);
-            if (border_type==0)
-                for k=1:n
-                    if (v_sd(k,1)<sd_Crit)||(v_sd(k,1)<0)
-                        if(v_od(k,1)>od_Crit)
-                            v_samp(k,1)=1;
-                        end
-                    else
-                        v_samp(k,1)=1;
-                    end
-                end
+            sd_Crit = dbord(1);
+            od_Crit = dbord(2);
+
+            switch border_type
+                case 0
+                    v_samp = (v_sd > sd_Crit) | (v_od > od_Crit);    
+                case 1
+                    od_Cur = od_Crit * ( 1 - v_sd / sd_Crit );    
+                    v_samp = (v_sd > sd_Crit) | (v_od > od_Cur);
             end
-            if (border_type==1)
-                for k=1:n
-                    if (v_sd(k,1)>sd_Crit)||(v_sd(k,1)<0)
-                        v_samp(k,1)=1;
-                    else
-                        od_Cur=od_Crit/sd_Crit*(sd_Crit-v_sd(k,1));
-                        if(v_od(k,1)>od_Cur)
-                            v_samp(k,1)=1;
-                        end
-                    end
-                end
-            end
-            samp_out=v_samp;
+            samp_out = v_samp;
             % end of samp_out function
         end
         
-        function v_sd =sd(X,P,D,numPC)
+        function v_sd = sd(X,P,D,numPC)
             % sd - Scores distance function, returns v_sd- vector of score distances for specified PCs
             %----------------------------------------------
             n = size(X, 1);
             T = X*P;
             v_lambd = diag(D);
-            v_work=zeros(n,numPC);
-            v_sd=zeros(n,1);
+            v_work = zeros(n,numPC);
             for k=1:numPC
-                v_work(:,k)=T(:,k)/v_lambd(k);
+                v_work(:,k) = T(:,k)/v_lambd(k);
             end
-            for k=1:n
-                v_sd(k,1)=sum(v_work(k,:).*v_work(k,:));
-            end
+            v_sd = sum(v_work.^2, 2);
             % end of sd function
         end
         
-        function v_od=od(X,P)
+        function v_od = od(X,P)
             % od - orthogonal distance function, returns v_od- ve
             %vector of orthogonal distances for specified PCs
             %----------------------------------------------
-            [n,p]=size(X);
-            E=X*(eye(p,p)-P*P');
-            v_od=zeros(n,1);
-            for k=1:n
-                v_od(k,1)=sum(E(k,:).*E(k,:))/p;
+            [n,p] = size(X);
+            isDataBigEnough = n*p > 10^7;
+            if  isDataBigEnough && gpuDeviceCount > 0
+                Xg = gpuArray(X);
+                Pg = gpuArray(P);
+                E = Xg*(eye(p,p,'gpuArray')-Pg*Pg');
+                v_odg = sum(E.^2,2)/p;
+                v_od = gather(v_odg);
+            else
+                E = X*(eye(p,p)-P*P');
+                v_od = sum(E.^2,2)/p;
             end
             % end of od function
         end

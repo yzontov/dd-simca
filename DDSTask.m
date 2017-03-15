@@ -261,6 +261,7 @@ if ~isempty(beta_res)
 end
         end
         
+        
         function result = beta_error(self, X1, beta)
             % beta_error -  function, returns type II error for Test set
             %----------------------------------------------
@@ -301,11 +302,18 @@ end
             flag = true;
             I1 = size(X1, 1);
             k = Nh + Nv;
+            
+            c1dims = (1:I1)';
+            c1m1 = cumsum(c1)./c1dims;
+            c1d1 = cumsum(c1.^2);
+            c1d1 = c1d1./c1dims - c1m1.^2;
+            c1d1 = c1d1 .*I1./(I1-1);
+            
             while flag
                 %Step 1
                 %Calculate  m' and d'
-                m1 = sum(c1)/I1;
-                d1 = sum((c1 - m1).^2)/(I1-1);
+                m1 = c1m1(I1);
+                d1 = c1d1(I1);
                 
                 %Calculate  M1 and Disc
                 M1 = d1/m1^2;
@@ -315,7 +323,6 @@ end
                 if Disc < 0
                     %warning('The test set is splitted into several subclasses!');
                     result.warning = 'The New Set contains more than one class of external objects!';
-                    c1 = c1(1:end-1,:);
                     I1 = I1 - 1;
                 else
                     break;
@@ -366,6 +373,7 @@ end
             end
             % end of beta_error function
         end
+
         
         function res = preprocess(self, XTest1)
             %apply preprocessing defind by the model to the new set
