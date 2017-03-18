@@ -107,7 +107,7 @@ ddlEstimation = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {
 
 end
 
-if(ismac||isunix)
+if(ismac)
 %data
 %btnTrainingSet
 uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Training Set',...
@@ -161,6 +161,59 @@ ddlEstimation = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {
 
 end
 
+if(isunix && ~ismac)
+%data
+%btnTrainingSet
+uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Training Set',...
+    'Position', [20 420 100 30], 'callback', @btnTrainingSet_Callback);
+lblTrainingSet = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Not selected', ...
+ 'Position', [20 402 100 15]) ;
+
+btnTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Samples Labels',...
+    'Position', [160 420 100 30], 'callback', @btnTrainingSetLabels_Callback,'Enable','off');
+lblTrainingSetLabels = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Not selected', ...
+ 'Position', [160 402 100 15]) ;
+
+%preprocessing
+chkCentering = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Centering',...
+    'Position', [20 345 100 30], 'callback', @Input_ModelParameters);
+chkScaling = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Scaling',...
+    'Position', [160 345 100 30], 'callback', @Input_ModelParameters);
+
+%model params
+%lblNumPC
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Number of Principal Components', ...
+ 'Position', [20 280 200 15], 'HorizontalAlignment', 'left'); 
+tbNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
+    'Value',1, 'Position', [180 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+
+%lblAlpha
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type I error (alpha)', ...
+ 'Position', [20 250 100 15], 'HorizontalAlignment', 'left'); 
+tbAlpha = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '0.01',...
+    'Value',1, 'Position', [180 250 80 20], 'BackgroundColor', 'white', 'callback', @Input_Alpha);
+chkAlphaAuto = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Auto',...
+    'Position', [130 250 50 15], 'callback', @chkAlphaAuto_Callback, 'Value', 0);
+
+%lblGamma
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Outlier significance (gamma)', ...
+ 'Position', [20 210 160 32], 'HorizontalAlignment', 'left'); 
+tbGamma = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '0.01',...
+    'Value',1, 'Position', [180 220 80 20], 'BackgroundColor', 'white', 'callback', @Input_Gamma);
+
+%lblArea
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type of aceptance area', ...
+ 'Position', [20 190 150 15], 'HorizontalAlignment', 'left'); 
+ddlArea = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {'chi-square','rectangle'},...
+    'Value',1, 'Position', [170 190 100 20], 'BackgroundColor', 'white', 'callback', @Input_ModelParameters);
+
+%lblEstimation
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Method of estimation', ...
+ 'Position', [20 160 140 15], 'HorizontalAlignment', 'left'); 
+ddlEstimation = uicontrol('Parent', tab_model, 'Style', 'popupmenu', 'String', {'classic','robust'},...
+    'Value',1, 'Position', [170 160 100 20], 'BackgroundColor', 'white', 'callback', @Input_ModelParameters);
+
+end
 %Prediction
 if vyear < 2014
 tab_predict = uitab('v0','Parent', tgroup, 'Title', 'Prediction');
@@ -199,7 +252,7 @@ lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
 
 end
 
-if(ismac||isunix)
+if(ismac)
 %btnNewSet
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
     'Position', [20 410 100 30], 'callback', @btnNewSet_Callback);
@@ -225,8 +278,42 @@ lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
 
 end
 
+if(isunix && ~ismac)
+%btnNewSet
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
+    'Position', [20 420 100 30], 'callback', @btnNewSet_Callback);
+lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
+ 'Position', [20 402 100 15]) ;
+
+btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Samples Labels',...
+    'Position', [160 420 100 30], 'callback', @btnNewSetLabels_Callback,'Enable','off');
+lblNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
+ 'Position', [160 402 100 15]) ;
+
+chkCalcAlpha = uicontrol('Parent', tab_predict, 'Style', 'checkbox', 'String', 'Calculate type I error (Alpha)',...
+    'Position', [20 350 200 30], 'Value', 0, 'callback', @chkCalcAlpha_Callback, 'Visible', 'on');
+
+%lblBetaCaption
+uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Predefined Type II error (Beta)', ...
+ 'Position', [20 320 180 30], 'HorizontalAlignment', 'left', 'Visible', 'on'); 
+tbBeta = uicontrol('Parent', tab_predict, 'Style', 'edit', 'String', '0.01', 'Visible', 'on','Enable','off',...
+    'Value',1, 'Position', [178 320 80 20], 'BackgroundColor', 'white', 'callback', @Input_Beta);
+
+lblWarning = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 300 250 30], 'HorizontalAlignment', 'left', 'Visible', 'on', 'ForegroundColor', [196, 84, 0]/255 );
+
+end
+
+if(ispc||ismac)
 lblBeta = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 280 150 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+end
+
+if(isunix && ~ismac)
+lblBeta = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 280 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+end
+
 lblSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 260 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
@@ -257,7 +344,7 @@ chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'Strin
     'Position', [300 400 200 30], 'Value', 1);
 end
 
-if(ismac||isunix)
+if(ismac)
 %lblAxesTransform
 uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'Axes transformation', ...
  'Position', [20 410 100 15]); 
@@ -269,6 +356,20 @@ chkShowLabelsTraining = uicontrol('Parent', tab_settings, 'Style', 'checkbox', '
 
 chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'String', 'Show sample labels for New Set',...
     'Position', [300 400 200 20], 'Value', 1);
+end
+
+if(isunix && ~ismac)
+%lblAxesTransform
+uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'Axes transformation', ...
+ 'Position', [20 420 140 15]); 
+ddlAxesTransform = uicontrol('Parent', tab_settings, 'Style', 'popupmenu', 'String', {'ln(1+x/x0)','none'},...
+    'Value',1, 'Position', [160 410 100 30], 'BackgroundColor', 'white');
+
+chkShowLabelsTraining = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'String', 'Show sample labels for Training Set',...
+    'Position', [300 430 250 20], 'Value', 1);
+
+chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'String', 'Show sample labels for New Set',...
+    'Position', [300 410 240 20], 'Value', 1);
 end
 
 %actions 
@@ -303,11 +404,23 @@ uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Clear',...
 
 end
 
+if(ismac)
+btnModelGraph = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Acceptance plot',...
+    'Position', [20 60 100 30], 'callback', @btnModelGraph_Callback,'Enable','off');
+btnPredictGraph = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Acceptance plot',...
+    'Position', [20 240 100 30], 'callback', @btnPredictGraph_Callback,'Enable','off');
+end
+
+if(isunix && ~ismac)
+btnModelGraph = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Acceptance plot','FontSize', 8,...
+    'Position', [20 60 100 30], 'callback', @btnModelGraph_Callback,'Enable','off');
+btnPredictGraph = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Acceptance plot','FontSize', 8,...
+    'Position', [20 240 100 30], 'callback', @btnPredictGraph_Callback,'Enable','off');
+end
+
 if(ismac||isunix)
 btnModelBuild = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Build',...
     'Position', [20 100 100 30], 'callback', @btnModelBuild_Callback,'Enable','off');
-btnModelGraph = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Acceptance plot',...
-    'Position', [20 60 100 30], 'callback', @btnModelGraph_Callback,'Enable','off');
 btnModelGraphExtreme = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Extreme plot',...
     'Position', [20 20 100 30], 'callback', @btnModelGraphExtreme_Callback,'Enable','off');
 btnModelSave = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Save model',...
@@ -321,8 +434,7 @@ uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Clear',...
 
 btnPredictBuild = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Decide',...
     'Position', [20 280 100 30], 'callback', @btnPredictBuild_Callback,'Enable','off');
-btnPredictGraph = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Acceptance plot',...
-    'Position', [20 240 100 30], 'callback', @btnPredictGraph_Callback,'Enable','off');
+
 btnPredictSave = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Save results',...
     'Position', [160 280 100 30], 'callback', @btnPredictSave_Callback,'Enable','off');
 %btnPredictLoad
@@ -381,7 +493,7 @@ lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String'
 
 end
 
-if(ismac||isunix)
+if(ismac)
 %lblHasModel = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Model created', ...
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
@@ -427,6 +539,53 @@ lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String'
 
 end
 
+if(isunix && ~ismac)
+%lblHasModel = uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Model created', ...
+% 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
+lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
+    'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
+ 'Position', [310 310 220 20], 'ForegroundColor', [196, 84, 0]/255);  
+lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
+    'String', 'Outliers in Training set!', 'Visible', 'off', ...
+ 'Position', [310 295 220 20], 'ForegroundColor', [255, 0, 0]/255); 
+
+lblCurrentAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 445 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentPC = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [430 445 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentArea = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 427 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentEstimation = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [430 427 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentPreprocessing = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 409 250 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblDOF_SD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 389 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblDOF_OD = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [400 389 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblTrainingSetName = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
+ 'Position', [310 370 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
+lblCurrentAlpha2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 445 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentPC2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [430 445 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentArea2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 427 120 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentEstimation2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [430 427 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblCurrentPreprocessing2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 409 250 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblDOF_SD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 389 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblDOF_OD2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [400 389 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+lblTrainingSetName2 = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
+ 'Position', [310 370 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
+end
+
+
 lblModelSamples = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 280 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblModelExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
@@ -437,7 +596,11 @@ lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '',
 lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 220 140 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
-
+if(isunix && ~ismac)
+    set(findall(f,'-property','FontSize'),'FontSize',10);
+    set(btnModelGraph,'FontSize',8);
+    set(btnPredictGraph,'FontSize',8);
+end
 
 set(f,'Visible','on');
 
