@@ -476,18 +476,22 @@ classdef  DDSimca<handle
             Nc = Nh + Nv;
             I = length(c);
             
-            N = zeros(1,I);
-            Nplus = zeros(1,I);
-            Nminus = zeros(1,I);
+            %N = zeros(1,I);
+            %Nplus = zeros(1,I);
+            %Nminus = zeros(1,I);
             
-            for n = 1:I
-                alpha = n / I;
-                Ccrit = self.chi2inv_( 1 - alpha, Nc);
-                N(n) = sum(c >= Ccrit);
-                D = 2*sqrt(n*(1-alpha));
-                Nplus(n) = n + D;
-                Nminus(n) = n - D;
-            end
+            n = 1:I;
+            alpha = n / I;
+            Ccrit = arrayfun( @(alpha_) self.chi2inv_( 1 - alpha_, Nc), alpha);
+            N = arrayfun( @(Ccrit_) sum(c >= Ccrit_), Ccrit);
+            
+            %D = 2*sqrt(n*(1-alpha));
+            Dminus = n - arrayfun(@(p,a) DDSimca.binv(I, p, a), alpha, 0.025 * ones(size(n)));
+            Dplus = arrayfun(@(p,a) DDSimca.binv(I, p, a), alpha, 0.975 * ones(size(n))) - n;
+            
+            Nplus = n + Dplus;
+            Nminus = n - Dminus;
+            
             
             handle = figure;
             
@@ -758,6 +762,19 @@ classdef  DDSimca<handle
             % Compute Interquartile Range (IQR)
             
             iqr = DDSimca.quartile(x, 3,'excel') - DDSimca.quartile(x, 1,'excel');
+        end
+        
+        function x = binv(n,p,a)
+            %Inverse of the binomial cumulative distribution function
+            %n - number of trials
+            %x - number of events
+            %p - event probability
+            %a - criterion value
+
+            tt = 0:n;
+            p = cumsum(arrayfun(@(t) (factorial(n)/(factorial(t)*factorial(n-t)))*p^t*(1-p)^(n-t), tt));
+            x = min(tt(p > a));
+
         end
         
         function r = chi2cdf_(val, dof)
