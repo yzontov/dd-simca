@@ -216,9 +216,67 @@ classdef DDSTask<handle
             DDSimca.randomize_plot_position(handle);
       end
           
+      function [handle, N, Nplus, Nminus] = TestSamplesExtremePlot(self)
+          %create extreme plot
+            oD = self.OD/self.Model.OD_mean;
+            sD = self.SD/self.Model.SD_mean;
+            Nh = self.Model.DoF_SD;
+            Nv = self.Model.DoF_OD;
+            
+            c = Nh*sD + Nv*oD;
+            c = sort(c);
+            Nc = Nh + Nv;
+            I = length(c);
+            
+            %N = zeros(1,I);
+            %Nplus = zeros(1,I);
+            %Nminus = zeros(1,I);
+            
+            n = 1:I;
+            alpha = n / I;
+            Ccrit = arrayfun( @(alpha_) DDSimca.chi2inv_( 1 - alpha_, Nc), alpha);
+            N = arrayfun( @(Ccrit_) sum(c >= Ccrit_), Ccrit);
+            
+            %D = 2*sqrt(n*(1-alpha));
+            Dminus = n - arrayfun(@(p,a) DDSimca.binv(I, p, a), alpha, 0.025 * ones(size(n)));
+            Dplus = arrayfun(@(p,a) DDSimca.binv(I, p, a), alpha, 0.975 * ones(size(n))) - n;
+            
+            Nplus = n + Dplus;
+            Nminus = n - Dminus;
+            
+            
+            handle = figure;
+            
+            if isempty(self.AcceptancePlotTitle)
+                set(handle,'name','Extreme plot','numbertitle','off');
+                title('Extreme plot', 'FontWeight', 'bold');
+            else
+                set(handle,'name',sprintf('Extreme plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
+                title(sprintf('Extreme plot. Test set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold', 'Interpreter', 'none');
+            end
+            hold on;
+
+            xlabel('Expected', 'FontWeight', 'bold');
+            ylabel('Observed', 'FontWeight', 'bold');
+            
+            expected = 1:length(N);
+            exp_plot = plot(expected, expected, '-b', 'LineWidth', 2);
+            
+            for i = 1:length(expected)
+                plot([expected(i),expected(i)],[Nminus(i),Nplus(i)], '-b');
+            end
+            
+            n_plot = plot(expected, N, 'or','MarkerFaceColor','r');
+            
+            legend([n_plot,exp_plot],'Observed','Expected', 'Location', 'northwest');
+            legend('boxon');
+            
+            hold off;
+            DDSimca.randomize_plot_position(handle);
+      end
       
-      function [handle, N, Nplus, Nminus] = ExtremePlot(self)
-            %create extreme plot
+      function [handle, N, Nplus, Nminus] = NewSamplesExtremePlot(self)
+          %create extreme plot
             NewSet_ = self.preprocess(self.NewSet);
             
             oD = self.OD/self.Model.OD_mean;
@@ -238,7 +296,7 @@ classdef DDSTask<handle
             n = 1:I;
             beta = n / I - 0.00000001;
 
-            alpha = arrayfun(@(b) self.beta_error(NewSet_, 1 - b), beta);
+            alpha = arrayfun(@(b) self.beta_error(NewSet_, b), beta);
 
             N = arrayfun(@(a) sum(c < a.Ccrit), alpha);
             
@@ -279,7 +337,7 @@ classdef DDSTask<handle
             
             hold off;
             DDSimca.randomize_plot_position(handle);
-        end
+      end
         
    end
       
@@ -435,7 +493,7 @@ end
             else
                 %If beta is given then calculate Ccrit, and calculate alpha
                 if beta ~= 0
-                    Zb = DDSimca.norminv_(1 - beta);
+                    Zb = DDSimca.norminv_(beta);
                     Ccrit = c0*(k + s)*(Sz*Zb + Mz)^(1/h);
                     alpha = 1 - DDSimca.chi2cdf_(Ccrit, k);
                     

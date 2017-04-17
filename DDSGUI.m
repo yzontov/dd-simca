@@ -393,8 +393,10 @@ btnPredictBuild = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'Strin
     'Position', [20 300 100 30], 'callback', @btnPredictBuild_Callback,'Enable','off');
 btnPredictGraph = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Acceptance plot',...
     'Position', [20 260 100 30], 'callback', @btnPredictGraph_Callback,'Enable','off');
-btnPredictGraphExtreme = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Extreme plot',...
-    'Position', [20 220 100 30], 'callback', @btnPredictGraphExtreme_Callback,'Enable','off');
+btnPredictGraphExtremeNew = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Extreme plot (New)',...
+    'Position', [20 220 100 30], 'callback', @btnPredictGraphExtremeNew_Callback,'Enable','off');
+btnPredictGraphExtremeTest = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Extreme plot (Test)',...
+    'Position', [20 180 100 30], 'callback', @btnPredictGraphExtremeTest_Callback,'Enable','off');
 btnPredictSave = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Save results',...
     'Position', [160 300 100 30], 'callback', @btnPredictSave_Callback,'Enable','off');
 %btnPredictLoad
@@ -425,8 +427,10 @@ btnModelBuild = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 
     'Position', [20 100 100 30], 'callback', @btnModelBuild_Callback,'Enable','off');
 btnModelGraphExtreme = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Extreme plot',...
     'Position', [20 20 100 30], 'callback', @btnModelGraphExtreme_Callback,'Enable','off');
-btnPredictGraphExtreme = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Extreme plot',...
-    'Position', [20 200 100 30], 'callback', @btnPredictGraphExtreme_Callback,'Enable','off');
+btnPredictGraphExtremeNew = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Extreme plot (New)',...
+    'Position', [20 200 100 30], 'callback', @btnPredictGraphExtremeNew_Callback,'Enable','off');
+btnPredictGraphExtremeTest = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Extreme plot (Test)',...
+    'Position', [20 160 100 30], 'callback', @btnPredictGraphExtremeTest_Callback,'Enable','off');
 btnModelSave = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Save model',...
     'Position', [160 100 100 30], 'callback', @btnModelSave_Callback,'Enable','off');
 %btnModelLoad
@@ -925,7 +929,8 @@ end
 function ClearCurrentModel()
 
 set(btnPredictGraph,'Enable','off');
-set(btnPredictGraphExtreme,'Enable','off');
+set(btnPredictGraphExtremeNew,'Enable','off');
+set(btnPredictGraphExtremeTest,'Enable','off');
 set(btnPredictSave,'Enable','off');
 
 set(lblWarning,'String','');
@@ -1186,14 +1191,15 @@ Task.Labels = NewSetLabels;
 
 if get(chkCalcAlpha,'Value')
     Task.CalculateBeta = ~get(chkCalcAlpha,'Value');
-    Task.Beta = 1 - str2double(get(tbBeta,'string'));
+    Task.Beta = str2double(get(tbBeta,'string'));
 end
 
 waitbar(1/5, h);    
 set(btnPredictSave,'Enable','on');
 set(btnPredictSave,'Enable','on');
 set(btnPredictGraph,'Enable','on');
-set(btnPredictGraphExtreme,'Enable','on');
+set(btnPredictGraphExtremeNew,'Enable','on');
+set(btnPredictGraphExtremeTest,'Enable','on');
 waitbar(2/5, h);
 if ~isempty(Task.Warning)
     set(lblWarning,'String', ['Warning: ' Task.Warning]);
@@ -1242,14 +1248,24 @@ end
 Task.AcceptancePlot();
 end
 
-function btnPredictGraphExtreme_Callback(~, ~)
+function btnPredictGraphExtremeNew_Callback(~, ~)
 val = get(ddlAxesTransform, 'Value');
 if val == 1
     Task.Transformation = 'log';
 else
     Task.Transformation = 'none';
 end
-Task.ExtremePlot();
+Task.NewSamplesExtremePlot();
+end
+
+function btnPredictGraphExtremeTest_Callback(~, ~)
+val = get(ddlAxesTransform, 'Value');
+if val == 1
+    Task.Transformation = 'log';
+else
+    Task.Transformation = 'none';
+end
+Task.TestSamplesExtremePlot();
 end
 
 function btnPredictLoad_Callback(~, ~)
@@ -1258,7 +1274,8 @@ function btnPredictLoad_Callback(~, ~)
 if ~isempty(tvar)
 Task = tvar{1};
 set(btnPredictGraph,'Enable','on');
-set(btnPredictGraphExtreme,'Enable','on');
+set(btnPredictGraphExtremeNew,'Enable','on');
+set(btnPredictGraphExtremeTest,'Enable','on');
 set(btnPredictSave,'Enable','on');
 set(btnNewSetLabels,'Enable','on');
 
@@ -1292,7 +1309,8 @@ end
 %end
 ClearCurrentModel();
 set(btnPredictGraph,'Enable','on');
-set(btnPredictGraphExtreme,'Enable','on');
+set(btnPredictGraphExtremeNew,'Enable','on');
+set(btnPredictGraphExtremeTest,'Enable','on');
 set(btnPredictSave,'Enable','on');
 
 NewSet = Task.NewSet;
@@ -1383,7 +1401,8 @@ if ~isempty(tvar)
         set(btnPredictBuild,'Enable','on');
         set(btnPredictSave,'Enable','off');
         set(btnPredictGraph,'Enable','off'); 
-        set(btnPredictGraphExtreme,'Enable','off');
+        set(btnPredictGraphExtremeNew,'Enable','off');
+        set(btnPredictGraphExtremeTest,'Enable','off');
     end
 
     end
@@ -1404,7 +1423,8 @@ function btnPredictClear_Callback(~, ~)
 
 set(btnPredictBuild,'Enable','off');
 set(btnPredictGraph,'Enable','off');
-set(btnPredictGraphExtreme,'Enable','off');
+set(btnPredictGraphExtremeNew,'Enable','off');
+set(btnPredictGraphExtremeTest,'Enable','off');
 set(btnPredictSave,'Enable','off');
 set(lblNewSet,'string', 'Not selected'); 
 NewSet= [];
