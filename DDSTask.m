@@ -359,7 +359,7 @@ end
             else
                 %If beta is given then calculate Ccrit, and calculate alpha
                 if beta ~= 0
-                    Zb = DDSimca.norminv_(1-beta);
+                    Zb = DDSimca.norminv_(beta);
                     Ccrit = c0*(k + s)*(Sz*Zb + Mz)^(1/h);
                     alpha = 1 - DDSimca.chi2cdf_(Ccrit, k);
                     

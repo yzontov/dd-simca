@@ -30,8 +30,8 @@ set(f, 'Position', [100 100 600 500]);
 
 mh = uimenu(f,'Label','Help');
 uimenu(mh,'Label','Help on DDSGUI','Callback', @DDSGUIHelp_Callback);
-uimenu(mh,'Label','Help on DDSimca class','Callback', @DDSimcaHelp_Callback);
-uimenu(mh,'Label','Help on DDSTask class','Callback', @DDSTaskHelp_Callback);
+%uimenu(mh,'Label','Help on DDSimca class','Callback', @DDSimcaHelp_Callback);
+%uimenu(mh,'Label','Help on DDSTask class','Callback', @DDSTaskHelp_Callback);
 
 if vyear < 2014
 tgroup = uitabgroup('v0','Parent', f);
@@ -608,13 +608,13 @@ function DDSGUIHelp_Callback(~, ~)
  web('help/index.html')
 end
 
-function DDSimcaHelp_Callback(~, ~)
- doc DDSimca
-end
+%function DDSimcaHelp_Callback(~, ~)
+% doc DDSimca
+%end
 
-function DDSTaskHelp_Callback(~, ~)
- doc DDSTask   
-end
+%function DDSTaskHelp_Callback(~, ~)
+% doc DDSTask   
+%end
 
 function chkAlphaAuto_Callback(self, ~)
 val = get(self, 'Value');
@@ -1410,21 +1410,28 @@ str=get(src,'String');
 if(~isempty(TrainingSet))
 
 XTest = TrainingSet;
+vmax = min(size(XTest));
+
 if get(chkCentering,'Value') == 1
-mean_ = mean(TrainingSet);
-XTest = bsxfun(@minus, XTest, mean_);
-end
+%mean_ = mean(TrainingSet);
+%XTest = bsxfun(@minus, XTest, mean_);
+
+vmax = vmax - 1;
 
 if get(chkScaling,'Value') == 1
-temp = std(TrainingSet,0,1);
-temp(temp == 0) = 1;
-std_ = temp;
-XTest = bsxfun(@rdivide, XTest, std_);
+%temp = std(TrainingSet,0,1);
+%temp(temp == 0) = 1;
+%std_ = temp;
+%XTest = bsxfun(@rdivide, XTest, std_);
+
+vmax = vmax - 1;
+
 end
 
-[~,D,~] = svd(XTest);
+end
 
-vmax = rank(D);
+%[~,D,~] = svd(XTest);
+%vmax = rank(D);
 
 val = str2double(str);
 if isempty(val) || isnan(val)
