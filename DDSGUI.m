@@ -452,7 +452,7 @@ if(ispc)
 % 'Position', [160 430 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 315 160 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [300 315 260 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 300 140 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -498,7 +498,7 @@ if(ismac)
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 310 150 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [300 310 260 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 295 140 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -544,7 +544,7 @@ if(isunix && ~ismac)
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 310 220 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [300 310 260 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 295 220 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -688,8 +688,15 @@ waitbar(8/10, h);
 %set(lblHasModel,'string','Model created');
 %set(lblHasModel,'Visible','on');
 
-if ~isempty(Model.HasExtremes) && Model.HasExtremes
+if (~isempty(Model.HasExtremes) && Model.HasExtremes) || (Model.DoF_OD == 250 || Model.DoF_SD == 250) 
 set(lblHasTrainingExtremes,'Visible','on');
+
+if (Model.DoF_OD == 250 || Model.DoF_SD == 250) 
+    set(lblHasTrainingExtremes,'String','Calculations are not stable - change the number of PCs!');
+else
+    set(lblHasTrainingExtremes,'String','Extreme objects in Training set!');
+end
+
 else
 set(lblHasTrainingExtremes,'Visible','off');
 end
