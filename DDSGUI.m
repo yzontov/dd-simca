@@ -452,7 +452,7 @@ if(ispc)
 % 'Position', [160 430 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [300 315 260 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [310 315 270 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 300 140 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -1412,6 +1412,31 @@ set(tbBeta,'Enable', 'off');
 set(chkCalcAlpha,'value', 0);
 end
 
+function CheckPC()
+str=get(tbNumPC,'String');    
+if(~isempty(TrainingSet))
+
+XTest = TrainingSet;
+vmax = min(size(XTest));
+
+if get(chkCentering,'Value') == 1
+vmax = vmax - 1;
+
+if get(chkScaling,'Value') == 1
+vmax = vmax - 1;
+end
+
+end
+
+val = str2double(str);
+if val < 1 || val > vmax
+       set(tbNumPC,'string','2');
+       warndlg(sprintf('Number of Principal Components should be greater than 0 and less than %d!', vmax+1));
+end
+
+end
+end
+      
 function Input_NumPC(src, ~)
 str=get(src,'String');
 if(~isempty(TrainingSet))
@@ -1512,6 +1537,7 @@ if ~isempty(val) && ~isnan(val)
     set(btnModelSave,'Enable','off');
     
     ClearCurrentModel();
+    CheckPC();
 end
 end
 
