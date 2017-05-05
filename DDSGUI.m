@@ -1421,11 +1421,10 @@ vmax = min(size(XTest));
 
 if get(chkCentering,'Value') == 1
 vmax = vmax - 1;
+end
 
 if get(chkScaling,'Value') == 1
 vmax = vmax - 1;
-end
-
 end
 
 val = str2double(str);
@@ -1445,25 +1444,12 @@ XTest = TrainingSet;
 vmax = min(size(XTest));
 
 if get(chkCentering,'Value') == 1
-%mean_ = mean(TrainingSet);
-%XTest = bsxfun(@minus, XTest, mean_);
-
 vmax = vmax - 1;
+end
 
 if get(chkScaling,'Value') == 1
-%temp = std(TrainingSet,0,1);
-%temp(temp == 0) = 1;
-%std_ = temp;
-%XTest = bsxfun(@rdivide, XTest, std_);
-
 vmax = vmax - 1;
-
 end
-
-end
-
-%[~,D,~] = svd(XTest);
-%vmax = rank(D);
 
 val = str2double(str);
 if isempty(val) || isnan(val)
