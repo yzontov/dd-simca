@@ -30,8 +30,8 @@ set(f, 'Position', [100 100 600 500]);
 
 mh = uimenu(f,'Label','Help');
 uimenu(mh,'Label','Help on DDSGUI','Callback', @DDSGUIHelp_Callback);
-uimenu(mh,'Label','Help on DDSimca class','Callback', @DDSimcaHelp_Callback);
-uimenu(mh,'Label','Help on DDSTask class','Callback', @DDSTaskHelp_Callback);
+%uimenu(mh,'Label','Help on DDSimca class','Callback', @DDSimcaHelp_Callback);
+%uimenu(mh,'Label','Help on DDSTask class','Callback', @DDSTaskHelp_Callback);
 
 if vyear < 2014
 tgroup = uitabgroup('v0','Parent', f);
@@ -460,7 +460,7 @@ if(ispc)
 % 'Position', [160 430 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 315 160 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [310 315 270 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 300 140 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -506,7 +506,7 @@ if(ismac)
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 310 150 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [300 310 260 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 295 140 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -552,7 +552,7 @@ if(isunix && ~ismac)
 % 'Position', [160 420 100 20], 'Visible', 'off', 'ForegroundColor', [0, 153, 0]/255);  
 lblHasTrainingExtremes = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Extreme objects in Training set!', 'Visible', 'off', ...
- 'Position', [310 310 220 20], 'ForegroundColor', [196, 84, 0]/255);  
+ 'Position', [300 310 260 20], 'ForegroundColor', [196, 84, 0]/255);  
 lblHasTrainingOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'HorizontalAlignment', 'left', ...
     'String', 'Outliers in Training set!', 'Visible', 'off', ...
  'Position', [310 295 220 20], 'ForegroundColor', [255, 0, 0]/255); 
@@ -616,13 +616,13 @@ function DDSGUIHelp_Callback(~, ~)
  web('help/index.html')
 end
 
-function DDSimcaHelp_Callback(~, ~)
- doc DDSimca
-end
+%function DDSimcaHelp_Callback(~, ~)
+% doc DDSimca
+%end
 
-function DDSTaskHelp_Callback(~, ~)
- doc DDSTask   
-end
+%function DDSTaskHelp_Callback(~, ~)
+% doc DDSTask   
+%end
 
 function chkAlphaAuto_Callback(self, ~)
 val = get(self, 'Value');
@@ -696,8 +696,15 @@ waitbar(8/10, h);
 %set(lblHasModel,'string','Model created');
 %set(lblHasModel,'Visible','on');
 
-if ~isempty(Model.HasExtremes) && Model.HasExtremes
+if (~isempty(Model.HasExtremes) && Model.HasExtremes) || (Model.DoF_OD == 250 || Model.DoF_SD == 250) 
 set(lblHasTrainingExtremes,'Visible','on');
+
+if (Model.DoF_OD == 250 || Model.DoF_SD == 250) 
+    set(lblHasTrainingExtremes,'String','Calculations are not stable - change the number of PCs!');
+else
+    set(lblHasTrainingExtremes,'String','Extreme objects in Training set!');
+end
+
 else
 set(lblHasTrainingExtremes,'Visible','off');
 end
@@ -1445,26 +1452,44 @@ set(tbBeta,'Enable', 'off');
 set(chkCalcAlpha,'value', 0);
 end
 
+function CheckPC()
+str=get(tbNumPC,'String');    
+if(~isempty(TrainingSet))
+
+XTest = TrainingSet;
+vmax = min(size(XTest));
+
+if get(chkCentering,'Value') == 1
+vmax = vmax - 1;
+end
+
+if get(chkScaling,'Value') == 1
+vmax = vmax - 1;
+end
+
+val = str2double(str);
+if val < 1 || val > vmax
+       set(tbNumPC,'string','2');
+       warndlg(sprintf('Number of Principal Components should be greater than 0 and less than %d!', vmax+1));
+end
+
+end
+end
+      
 function Input_NumPC(src, ~)
 str=get(src,'String');
 if(~isempty(TrainingSet))
 
 XTest = TrainingSet;
+vmax = min(size(XTest));
+
 if get(chkCentering,'Value') == 1
-mean_ = mean(TrainingSet);
-XTest = bsxfun(@minus, XTest, mean_);
+vmax = vmax - 1;
 end
 
 if get(chkScaling,'Value') == 1
-temp = std(TrainingSet,0,1);
-temp(temp == 0) = 1;
-std_ = temp;
-XTest = bsxfun(@rdivide, XTest, std_);
+vmax = vmax - 1;
 end
-
-[~,D,~] = svd(XTest);
-
-vmax = rank(D);
 
 val = str2double(str);
 if isempty(val) || isnan(val)
@@ -1538,6 +1563,7 @@ if ~isempty(val) && ~isnan(val)
     set(btnModelSave,'Enable','off');
     
     ClearCurrentModel();
+    CheckPC();
 end
 end
 

@@ -42,6 +42,15 @@ To build a DD-SIMCA model:
   <img src="model.png" alt="Model tab." height="500" width="500">
   <figcaption>Model tab</figcaption>
 </figure>
+<p>
+    <b>Warning:</b> Some parameter settings (e.g. if the number of PCs is too high) can cause the model to become unstable. Such a model may provide erroneous result when applied to a New data set. 
+    In such cases an informational message will appear in the <i>Results and statistics</i> section: 
+    <span style="color:#FFA600;">Calculations are not stable - change the number of PCs!</span>. It is recommended to change the parameters and rebuild the model.
+</p>
+<figure style="text-align:center;">
+  <img src="not_stable.png" alt="Not stable model" height="500" width="500">
+  <figcaption>Nonstable model</figcaption>
+</figure>
 <hr/>
 <h3>Visual analysis of the results</h3>
 <p>
@@ -59,7 +68,8 @@ The Acceptance plot for the training data shows the acceptance (<span style="col
   <figcaption>Extreme plot</figcaption>
 </figure>
 <p>
-The Extreme plot allows to check whether the training set contains outlier samples. A sample may be considered a possible outlier if it appears outside the tolerance interval on the Extreme plot.
+The Extreme plot indicates how the observed number of the extremes is related to their estimated number.<br/>
+For the selected number of PCs the Extreme plot is a tool for analysis of the quality of the classification model.
 </p>
 <hr/>
 <h3>Working with the Prediction tab</h3>

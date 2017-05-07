@@ -102,6 +102,8 @@ classdef  DDSimca<handle
     %
     %numPC - number of principal components
     %
+    %Scores - scores matrix
+    %
     %Loadings - loadings matrix
     %
     %EigenMatrix - matrix of eigenvalues from the SVD decomposition
@@ -194,6 +196,7 @@ classdef  DDSimca<handle
         OutlierObjects % vector, has the same length as the number of objects in the training set. '1' indicates that the corresponding object is an outlier object.
         TrainingSet % training set (matrix)
         numPC = 2%number of principal components
+        Scores %scores matrix
         Loadings %loadings matrix
         EigenMatrix % matrix of eigenvalues from the SVD decomposition
         SD_mean % mean of normalized squared Mahalanobis distances (SD) for objects
@@ -587,6 +590,7 @@ classdef  DDSimca<handle
             end
             
             self.Loadings = P(:,1:NumPC);
+            self.Scores = X*self.Loadings;
             self.EigenMatrix = D1;
             self.OD_mean = av_od;
             self.SD_mean = av_sd;
@@ -635,7 +639,11 @@ classdef  DDSimca<handle
             aver=mean(v_uT);
             DoF=round(2*(aver/std(v_uT))^2);
             if (DoF < 1)
-                DoF=1;
+                DoF = 1;
+            end
+            %temp
+            if (DoF > 250)
+                DoF = 250;
             end
             % end of momentest function
         end
@@ -661,6 +669,11 @@ classdef  DDSimca<handle
             dChm = DDSimca.chi2inv_(0.5,R1);
             
             aver=0.5*R1*(M/dChm + R/dChi);
+            
+            %temp
+            if (DoF > 250)
+                DoF = 250;
+            end
             
             % end of robustest function
         end
