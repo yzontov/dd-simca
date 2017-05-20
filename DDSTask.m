@@ -260,7 +260,10 @@ classdef DDSTask<handle
             ylabel('Observed', 'FontWeight', 'bold');
             
             expected = 1:length(N);
-            exp_plot = plot(expected, expected, '-b', 'LineWidth', 2);
+            
+            expected_plus2 = 1:(length(N)+2);
+            exp_plot = plot(expected_plus2, expected_plus2, '-b', 'LineWidth', 2);
+            
             
             for i = 1:length(expected)
                 plot([expected(i),expected(i)],[Nminus(i),Nplus(i)], '-b');
@@ -287,7 +290,31 @@ classdef DDSTask<handle
             c = Nh*sD + Nv*oD;
             c = sort(c);
             %Nc = Nh + Nv;
-            I = length(c);
+            %I = length(c);
+            
+            flag = true;
+            I = size(NewSet_, 1);
+            k = Nh + Nv;
+            
+            c1dims = (1:I)';
+            c1m1 = cumsum(c)./c1dims;
+            c1d1 = cumsum(c.^2);
+            c1d1 = c1d1./c1dims - c1m1.^2;
+            c1d1 = c1d1 .*I./(I-1);
+            
+            while flag
+                m1 = c1m1(I);
+                d1 = c1d1(I);
+
+                M1 = d1/m1^2;
+                Disc = 4 - 2*k*M1;
+
+                if Disc < 0
+                    I = I - 1;
+                else
+                    break;
+                end
+            end
             
             %N = zeros(1,I);
             %Nplus = zeros(1,I);
