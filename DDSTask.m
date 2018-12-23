@@ -24,10 +24,22 @@ classdef DDSTask<handle
     %The method returns handle of the plot figure.
     %
     %
-    %[handle, N, Nplus, Nminus] = ExtremePlot()
+    %[handle, N, Nplus, Nminus] = TestSamplesExtremePlot()
     %
     %The Extreme plot shows the observed vs. the expected
-    %number of extreme objects and provides graphical means for
+    %number of extreme objects for a test dataset and provides graphical means for
+    %the data analysis.
+    %The method has no parameters.
+    %The method returns handle of the plot figure,
+    %N - number of samples with weighted sum of the SD variable the OD
+    %variable greater than critical,
+    %Nplus - upper boundary for N,
+    %Nminus - lower boundary for N
+    %
+    %[handle, N, Nplus, Nminus] = NewSamplesExtremePlot()
+    %
+    %The Extreme plot shows the observed vs. the expected
+    %number of extreme objects for a new dataset and provides graphical means for
     %the data analysis.
     %The method has no parameters.
     %The method returns handle of the plot figure,
