@@ -6,7 +6,7 @@ DDSimca is a Matlab tool which implements the [Data-Driven SIMCA](http://onlinel
 What is new
 -----------
 
-In the latest release (1.1) the implementations af all main algorithms used in the Tool have been optimized to improve the performance on large data sets. Also the support of Unix systems was added in the GUI. Taking into account the diversity of existing Unix systems and users's graphical settings, some slight differences are possible in the GUI in different Unix systems.
+In the latest release (1.2) the separate Extreme plots for New and Test datasets have been implemented.
 A history of changes is available [here](NEWS.md)
 
 How to install
