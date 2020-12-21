@@ -11,10 +11,14 @@
 % and systematic (venetian blinds) cross-validation. It is assumed that data rows are ordered
 % correctly, so systematic cross-validation can be applied
 %
+% Sergey Kucheryavskiy, 2020
+% https://github.com/svkucheryavski
+%
 % Cite as:
 % Kucheryavskiy, S., Zhilin, S., Rodionova, O., Pomerantsev A., 
 % Procrustes Cross-Validation—A Bridge between Cross-Validation and Independent Validation Sets. 
 % Analytical Chemistry, 92 (17), 2020. pp.11842–11850. DOI: 10.1021/acs.analchem.0c02175
+%
 function Xpv = pcv(X, nComp, nSeg, Scale)
 
    nRows = size(X, 1);
