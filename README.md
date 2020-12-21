@@ -13,7 +13,7 @@ Pages 23-28, ISSN 0169-7439, DOI:[10.1016/j.chemolab.2017.05.010](https://doi.or
 What is new
 -----------
 
-In the latest release (1.2) the separate Extreme plots for New and Test datasets have been implemented.
+In the latest release (1.3) an option to generate [Procrustes cross-validation](https://github.com/svkucheryavski/pcv/) dataset has been implemented.
 A history of changes is available [here](NEWS.md)
 
 How to install

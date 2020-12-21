@@ -1,3 +1,7 @@
+v. 1.3
+========
+* Generate Procrustes cross-validation dataset
+
 v. 1.2
 ========
 * Separate Extreme plots for New and Test datasets

@@ -1477,7 +1477,7 @@ end
         set(lblNewSetLabels,'string', 'Not selected'); 
     
        
-        NewSetName = [TrainingSetName '_PCV'];
+        NewSetName = [TrainingSetName '_PCV_' sprintf('PC%d_K%d', vars(1), vars(2))];
         
         assignin('base', NewSetName, NewSet);
         
