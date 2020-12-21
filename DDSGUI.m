@@ -228,10 +228,20 @@ grpCurrentModelPredict = uipanel('Parent', tab_predict, 'Title', 'Current model'
 
 if(ispc)
 %btnNewSet
+% uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
+%     'Position', [20 420 50 30], 'callback', @btnNewSet_Callback);
+% lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
+%  'Position', [20 402 100 15]) ;
+
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
-    'Position', [20 420 100 30], 'callback', @btnNewSet_Callback);
+    'Position', [20 420 55 30], 'callback', @btnNewSet_Callback);
+uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
+ 'Position', [80 420 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
+    'Position', [95 420 55 30], 'callback', @btnPCV_Callback);
+
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
- 'Position', [20 402 100 15]) ;
+ 'Position', [35 402 100 15]) ;
 
 btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 420 100 30], 'callback', @btnNewSetLabels_Callback,'Enable','off');
@@ -255,9 +265,14 @@ end
 if(ismac)
 %btnNewSet
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
-    'Position', [20 410 100 30], 'callback', @btnNewSet_Callback);
+    'Position', [20 410 55 30], 'callback', @btnNewSet_Callback);
+uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
+ 'Position', [80 410 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
+    'Position', [95 410 55 30], 'callback', @btnPCV_Callback);
+
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
- 'Position', [20 392 100 15]) ;
+ 'Position', [35 392 100 15]) ;
 
 btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 410 100 30], 'callback', @btnNewSetLabels_Callback,'Enable','off');
@@ -280,10 +295,20 @@ end
 
 if(isunix && ~ismac)
 %btnNewSet
+% uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
+%     'Position', [20 420 100 30], 'callback', @btnNewSet_Callback);
+% lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
+%  'Position', [20 402 100 15]) ;
+
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
-    'Position', [20 420 100 30], 'callback', @btnNewSet_Callback);
+    'Position', [20 420 55 30], 'callback', @btnNewSet_Callback);
+uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
+ 'Position', [80 420 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
+    'Position', [95 402 55 30], 'callback', @btnPCV_Callback);
+
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
- 'Position', [20 402 100 15]) ;
+ 'Position', [35 402 100 15]) ;
 
 btnNewSetLabels = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Samples Labels',...
     'Position', [160 420 100 30], 'callback', @btnNewSetLabels_Callback,'Enable','off');
@@ -1424,6 +1449,51 @@ if ~isempty(tvar)
     NewSetName = tvarname{1};
     end
 end
+end
+
+ function btnPCV_Callback(~, ~)
+
+ if ~isempty(TrainingSet)
+    %m_training = 0;
+    %n_training = 0;
+    
+    %[n_training,m_training]=size(TrainingSet);
+     
+    prompt = {'Number of PC:','Number of segments:'};
+    dlgtitle = 'PCV options';
+    dims = [1 30];
+
+    definput = {get(tbNumPC,'String'), '4'};
+    tvar = inputdlg(prompt,dlgtitle,dims,definput);
+
+    if ~isempty(tvar)
+        vars = str2double(tvar(1:2)); 
+        NewSet = pcv(TrainingSet, vars(1), vars(2));
+        [n, m] = size(NewSet);
+        set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
+        
+        NewSetLabels = [];
+        set(btnNewSetLabels,'Enable','on');
+        set(lblNewSetLabels,'string', 'Not selected'); 
+    
+       
+        NewSetName = [TrainingSetName '_PCV'];
+        
+        assignin('base', NewSetName, NewSet);
+        
+        if ~isempty(Model)
+            set(btnPredictBuild,'Enable','on');
+            set(btnPredictSave,'Enable','off');
+            set(btnPredictGraph,'Enable','off'); 
+            set(btnPredictGraphExtremeNew,'Enable','off');
+            set(btnPredictGraphExtremeTest,'Enable','off');
+        end
+    end
+     
+ else
+    warndlg('A training set must be selected to generate PCV dataset!');
+ end
+
 end
 
 function btnPredictClear_Callback(~, ~)
