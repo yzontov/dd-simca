@@ -5,12 +5,14 @@
 % X         matrix with calibration set (IxJ)
 % nComp     number of components for PCA decomposition
 % nSeg      number of segments for cross-validation
+% Center    logical, mean-center columns of X prior to decompositon or not
 % Scale     logical, standardize columns of X prior to decompositon or not
 %
 % The method computes pseudo-validation matrix Xpv, based on PCA decomposition of calibration set X
 % and systematic (venetian blinds) cross-validation. It is assumed that data rows are ordered
 % correctly, so systematic cross-validation can be applied
 %
+% Based on
 % Sergey Kucheryavskiy, 2020
 % https://github.com/svkucheryavski
 %
@@ -19,13 +21,17 @@
 % Procrustes Cross-Validation—A Bridge between Cross-Validation and Independent Validation Sets. 
 % Analytical Chemistry, 92 (17), 2020. pp.11842–11850. DOI: 10.1021/acs.analchem.0c02175
 %
-function Xpv = pcv(X, nComp, nSeg, Scale)
+function Xpv = pcv(X, nComp, nSeg, Center, Scale)
 
    nRows = size(X, 1);
    nCols = size(X, 2);
 
-   if nargin < 4
+   if nargin < 5
       Scale = false;
+   end
+   
+   if nargin < 4
+      Center = false;
    end
 
    if nargin < 3
@@ -37,7 +43,11 @@ function Xpv = pcv(X, nComp, nSeg, Scale)
    end
 
    % compute and save mean and standard deviation
-   mX = mean(X);
+   if Center
+      mX = mean(X);
+   else
+      mX = zeros(1, nCols);
+   end
 
    if Scale
       sX = std(X);
@@ -60,9 +70,12 @@ function Xpv = pcv(X, nComp, nSeg, Scale)
    segLen = ceil(nRows / nSeg);
    segRes = segLen * nSeg - nRows;
    if (segRes > 0)
-      cvSeq = [cvSeq, ones(segRes, 1) * cvSeq(end)];
+      cvSeq = [cvSeq, ones(1,segRes) * (-1)];
    end
    ind = reshape(cvSeq, nSeg, segLen)';
+   ind = reshape(ind, 1, segLen * nSeg);
+   ind(ind<0) = [];
+   [val_start, val_stop] = crossval_indexes(nRows, nSeg );
 
    % prepare empty matrix for pseudo-validation set
    Xpv = zeros(nRows, nCols);
@@ -71,9 +84,9 @@ function Xpv = pcv(X, nComp, nSeg, Scale)
    for k = 1:nSeg
 
       % split data to calibration and validation
-      Xk = X(ind(:, k), :);
+      Xk = X(ind(val_start(k):val_stop(k)), :);
       Xc = X;
-      Xc(ind(:, k), :) = [];
+      Xc(ind(val_start(k):val_stop(k)), :) = [];
 
       % get loadings for local model and rotation matrix between global and local models
       [~, ~, Pk] = svd(Xc, 'econ');
@@ -88,12 +101,47 @@ function Xpv = pcv(X, nComp, nSeg, Scale)
       R = getR(Pk, P);
 
       % rotate the local validation set and save as a part of Xpv
-      Xpv(ind(:, k), :) = Xk * R';
+      Xpv(ind(val_start(k):val_stop(k)), :) = Xk * R';
    end
 
    % uscenter and unscale the data
    Xpv = bsxfun(@times, Xpv, sX);
    Xpv = bsxfun(@plus, Xpv, mX);
+end
+
+% Generates indexes for k-fold cross-validation
+% N - number of samples
+% fold - number of partitions (i.e. 3, 5, 10)
+%
+% Yury Zontov, 2019
+% https://github.com/yzontov
+%
+function [val_start, val_stop] = crossval_indexes(N, fold )
+
+            k = N;
+            if(mod(k, fold) == 0)
+                x = 1:k;
+                rows = k / fold;
+                y = reshape (x, [rows, fold]);
+                start = y(1,:);
+                stop = y(end,:);
+            else
+                rows = fix(k / fold);
+                x = 1:rows*fold;
+                y = reshape (x, [rows, fold]);
+                start = y(1,:);
+                stop = y(end,:);
+                
+                for i = 1:mod(k, fold)
+                    stop(i) = stop(i) + 1;
+                    start(i+1:end) = start(i+1:end) + 1;
+                    stop(i+1:end) = stop(i+1:end) + 1;
+                end
+            end
+            
+            val_start = start;
+            val_stop = stop;
+            
 end
 
 % Creates rotation matrix to map a set vectors

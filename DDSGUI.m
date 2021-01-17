@@ -1,5 +1,8 @@
 function DDSGUI(varargin)
 
+addpath("help");
+
+
 %variables
 TrainingSet= [];
 NewSet= [];
@@ -1453,22 +1456,28 @@ end
 
  function btnPCV_Callback(~, ~)
 
- if ~isempty(TrainingSet)
+ if ~isempty(Model)
     %m_training = 0;
     %n_training = 0;
     
-    %[n_training,m_training]=size(TrainingSet);
+    [n_training,m_training]=size(TrainingSet);
      
-    prompt = {'Number of PC:','Number of segments:'};
+    prompt = {'Number of segments:'};
     dlgtitle = 'PCV options';
     dims = [1 30];
 
-    definput = {get(tbNumPC,'String'), '4'};
+    definput = {'4'};
     tvar = inputdlg(prompt,dlgtitle,dims,definput);
 
     if ~isempty(tvar)
-        vars = str2double(tvar(1:2)); 
-        NewSet = pcv(TrainingSet, vars(1), vars(2));
+        vars = str2double(tvar);
+        
+        if( vars < 2 || vars > n_training)
+            warndlg(sprintf('Number of segments should greater than 1 and less than %d!', n_training+1));
+            return;
+        end
+        
+        NewSet = pcv(TrainingSet, Model.numPC, vars, Model.Centering, Model.Scaling);
         [n, m] = size(NewSet);
         set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
         
@@ -1477,21 +1486,20 @@ end
         set(lblNewSetLabels,'string', 'Not selected'); 
     
        
-        NewSetName = [TrainingSetName '_PCV_' sprintf('PC%d_K%d', vars(1), vars(2))];
+        NewSetName = [TrainingSetName '_PCV_' sprintf('PC%d_K%d', Model.numPC, vars)];
         
         assignin('base', NewSetName, NewSet);
         
-        if ~isempty(Model)
+        
             set(btnPredictBuild,'Enable','on');
             set(btnPredictSave,'Enable','off');
             set(btnPredictGraph,'Enable','off'); 
             set(btnPredictGraphExtremeNew,'Enable','off');
             set(btnPredictGraphExtremeTest,'Enable','off');
-        end
     end
      
  else
-    warndlg('A training set must be selected to generate PCV dataset!');
+    warndlg('A model must be created before generating PCV dataset!');
  end
 
 end
