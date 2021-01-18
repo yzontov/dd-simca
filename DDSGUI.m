@@ -1,6 +1,8 @@
 function DDSGUI(varargin)
 
-addpath("help");
+opengl software
+opengl('save', 'software')
+addpath('help');
 
 
 %variables
