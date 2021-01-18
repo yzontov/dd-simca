@@ -1,7 +1,10 @@
 function DDSGUI(varargin)
 
-opengl software
-opengl('save', 'software')
+if ispc
+   opengl software
+   opengl('save', 'software')
+end
+
 addpath('help');
 
 
