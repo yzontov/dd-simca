@@ -23,6 +23,17 @@ Task = [];
 
 ModelName = [];
 
+isPCV = false;
+isNew = false;
+isTest = false;
+
+OD_DoF_Stat = [];
+SD_DoF_Stat = [];
+Sensitivity_Model = [];
+Sensitivity_Test = [];
+Specificity_New = [];
+numPC_Stat = [];
+
 %get version year
 v = version('-release');
 vyear = str2double(v(1:4));
@@ -241,12 +252,14 @@ if(ispc)
 % lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
 %  'Position', [20 402 100 15]) ;
 
-uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
-    'Position', [20 420 55 30], 'callback', @btnNewSet_Callback);
-uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
- 'Position', [80 420 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New',...
+    'Position', [20 420 45 30], 'callback', @btnNewSet_Callback);
+%uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
+% 'Position', [80 420 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Test',...
+    'Position', [63 410 45 30], 'callback', @btnTestSet_Callback);
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
-    'Position', [95 420 55 30], 'callback', @btnPCV_Callback);
+    'Position', [106 420 45 30], 'callback', @btnPCV_Callback);
 
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [35 402 100 15]) ;
@@ -272,12 +285,14 @@ end
 
 if(ismac)
 %btnNewSet
-uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
-    'Position', [20 410 55 30], 'callback', @btnNewSet_Callback);
-uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
- 'Position', [80 410 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New',...
+    'Position', [20 410 45 30], 'callback', @btnNewSet_Callback);
+%uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
+% 'Position', [80 410 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Test',...
+    'Position', [63 410 45 30], 'callback', @btnTestSet_Callback);
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
-    'Position', [95 410 55 30], 'callback', @btnPCV_Callback);
+    'Position', [106 410 45 30], 'callback', @btnPCV_Callback);
 
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [35 392 100 15]) ;
@@ -309,11 +324,13 @@ if(isunix && ~ismac)
 %  'Position', [20 402 100 15]) ;
 
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New Set',...
-    'Position', [20 420 55 30], 'callback', @btnNewSet_Callback);
-uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
- 'Position', [80 420 10 30]);
+    'Position', [20 420 45 30], 'callback', @btnNewSet_Callback);
+%uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
+% 'Position', [80 420 10 30]);
+uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Test',...
+    'Position', [63 420 45 30], 'callback', @btnTestSet_Callback);
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
-    'Position', [95 402 55 30], 'callback', @btnPCV_Callback);
+    'Position', [106 420 45 30], 'callback', @btnPCV_Callback);
 
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [35 402 100 15]) ;
@@ -351,6 +368,9 @@ lblSamples = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 260 100 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 lblExtremes = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', '', ...
  'Position', [310 240 200 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
+
+btnPredictStatVsPC = uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', '', ...
+ 'Position', [310 200 140 30], 'HorizontalAlignment', 'left', 'Visible', 'off', 'callback', @btnPredictStatVsPC_Callback);
 
 
 %Options
@@ -637,6 +657,12 @@ lblModelOutliers = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '',
 lblModelCalculatedAlpha = uicontrol('Parent', tab_model, 'Style', 'text', 'String', '', ...
  'Position', [310 220 140 15], 'HorizontalAlignment', 'left', 'Visible', 'on');
 
+btnModelSensitivityVsPC = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'Sensitivity vs. PCs plot', ...
+ 'Position', [310 180 140 30], 'HorizontalAlignment', 'left', 'Visible', 'off', 'callback', @btnModelSensitivityVsPC_Callback);
+ 
+btnModelDoFvsPC = uicontrol('Parent', tab_model, 'Style', 'pushbutton', 'String', 'DoF vs. PCs plot', ...
+ 'Position', [310 140 140 30], 'HorizontalAlignment', 'left', 'Visible', 'off', 'callback', @btnModelDoFvsPC_Callback);
+
 if(isunix && ~ismac)
     set(findall(f,'-property','FontSize'),'FontSize',10);
     set(btnModelGraph,'FontSize',8);
@@ -805,6 +831,9 @@ set(lblTrainingSetName2,'string', sprintf('Training Set: %s', Model.AcceptancePl
 set(grpCurrentModelModel,'Title', 'Current model');
 set(grpCurrentModelPredict,'Title', 'Current model');
 
+set(btnModelSensitivityVsPC,'Visible', 'on');
+set(btnModelDoFvsPC,'Visible', 'on');
+
 end
 
 catch ME
@@ -972,6 +1001,7 @@ set(btnPredictGraph,'Enable','off');
 set(btnPredictGraphExtremeNew,'Enable','off');
 set(btnPredictGraphExtremeTest,'Enable','off');
 set(btnPredictSave,'Enable','off');
+set(btnPredictStatVsPC,'Visible', 'off');
 
 set(lblWarning,'String','');
 set(lblBeta,'String','');
@@ -1016,6 +1046,16 @@ set(lblDOF_OD2,'string', '');
 
 set(lblTrainingSetName,'string', '');
 set(lblTrainingSetName2,'string', '');
+
+set(btnModelSensitivityVsPC,'Visible', 'off');
+set(btnModelDoFvsPC,'Visible', 'off');
+
+OD_DoF_Stat = [];
+SD_DoF_Stat = [];
+Sensitivity_Model = [];
+Sensitivity_Test = [];
+Specificity_New = [];
+numPC_Stat = [];
     
 end
 
@@ -1169,6 +1209,9 @@ set(lblTrainingSetName, 'String', sprintf('Training Set: %s', TrainingSetName));
 set(lblTrainingSetName2, 'String', sprintf('Training Set: %s', TrainingSetName));
 end
 
+set(btnModelSensitivityVsPC,'Visible', 'on');
+set(btnModelDoFvsPC,'Visible', 'on');
+
 end
 
 end
@@ -1229,6 +1272,10 @@ Task = DDSTask(Model, NewSet);
 Task.AcceptancePlotTitle = NewSetName;
 Task.Labels = NewSetLabels;
 
+Task.isNew = isNew;
+Task.isTest = isTest;
+Task.isPCV = isPCV;
+
 if get(chkCalcAlpha,'Value')
     Task.CalculateBeta = ~get(chkCalcAlpha,'Value');
     Task.Beta = str2double(get(tbBeta,'string'));
@@ -1236,10 +1283,18 @@ end
 
 waitbar(1/5, h);    
 set(btnPredictSave,'Enable','on');
-set(btnPredictSave,'Enable','on');
 set(btnPredictGraph,'Enable','on');
+
+if isNew
 set(btnPredictGraphExtremeNew,'Enable','on');
-set(btnPredictGraphExtremeTest,'Enable','on');
+set(btnPredictGraphExtremeTest,'Enable','off');     
+end
+
+if isTest || isPCV
+set(btnPredictGraphExtremeNew,'Enable','off');
+set(btnPredictGraphExtremeTest,'Enable','on');       
+end
+
 waitbar(2/5, h);
 if ~isempty(Task.Warning)
     set(lblWarning,'String', ['Warning: ' Task.Warning]);
@@ -1262,6 +1317,13 @@ waitbar(4/5, h);
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
 set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExternalObjects)));
+set(btnPredictStatVsPC,'Visible', 'on');
+if isNew
+   set(btnPredictStatVsPC,'String', 'Specificity vs. PCs plot'); 
+end
+if isTest || isPCV
+   set(btnPredictStatVsPC,'String', 'Sensitivity vs. PCs plot'); 
+end
 waitbar(5/5, h);
 delete(h);
 catch ME
@@ -1319,6 +1381,10 @@ set(btnPredictGraphExtremeTest,'Enable','on');
 set(btnPredictSave,'Enable','on');
 set(btnNewSetLabels,'Enable','on');
 
+isNew = Task.isNew;
+isTest = Task.isTest;
+isPCV = Task.isPCV;
+
 %if(Task.CalculateBeta)
 %set(chkCalcAlpha,'Value',1);
 if ~isempty(Task.Warning)
@@ -1349,8 +1415,15 @@ end
 %end
 ClearCurrentModel();
 set(btnPredictGraph,'Enable','on');
+
+if isNew
 set(btnPredictGraphExtremeNew,'Enable','on');
+end
+
+if isTest || isPCV
 set(btnPredictGraphExtremeTest,'Enable','on');
+end
+
 set(btnPredictSave,'Enable','on');
 
 NewSet = Task.NewSet;
@@ -1368,6 +1441,15 @@ end
 [n,~] = size(Task.NewSet);
 set(lblSamples,'string', sprintf('Samples: %d', n));
 set(lblExtremes,'string', sprintf('External objects: %d', sum(Task.ExternalObjects)));
+
+set(btnPredictStatVsPC,'Visible', 'on');
+if isNew
+   set(btnPredictStatVsPC,'String', 'Specificity vs. PCs plot'); 
+end
+if isTest || isPCV
+   set(btnPredictStatVsPC,'String', 'Sensitivity vs. PCs plot'); 
+end
+
 
 if (Task.ShowLabels)
 set(chkShowLabelsNew,'Value',1);
@@ -1412,6 +1494,68 @@ if ~isempty(tvar)
 end
 end
 
+function btnTestSet_Callback(~, ~)
+
+    m_training = 0;
+ if ~isempty(TrainingSet)
+     [~,m_training]=size(TrainingSet);
+ end
+    
+    
+[tvar, tvarname] = uigetvariables({'Pick a matrix:'},'InputDimensions',2, ...
+    'ValidationFcn',{@(x) isnumeric(x) && (m_training > 0 && size(x,2) == m_training || m_training == 0)});
+        %'InputDimensions',2, 'InputTypes',{'numeric'});
+if ~isempty(tvar)
+    new_set = cell2mat(tvar);
+    [n,m]=size(new_set);
+    
+    ok = 0;
+    
+    if ~isempty(Model)
+
+    [~,m_training]=size(TrainingSet);
+    
+    if (m ~= m_training)
+        ok = 1;
+        warndlg('The number of variables must be the same in the training and new arrays!');
+    else
+        ok = 2;
+        set(btnPredictBuild,'Enable','on');
+    end
+
+    end
+    
+    if (ok == 0 || ok == 2)
+    set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
+    NewSet = new_set;
+    set(btnNewSetLabels,'Enable','on');
+    
+    set(btnPredictSave,'Enable','off');
+    set(btnPredictGraph,'Enable','off');
+    set(btnPredictGraphExtremeNew,'Enable','off');
+    set(btnPredictGraphExtremeTest,'Enable','off');
+
+    set(lblWarning,'String','');
+    set(lblBeta,'String','');
+        
+    set(lblSamples,'string', '');
+    set(lblExtremes,'string', '');
+    set(btnPredictStatVsPC,'Visible', 'off');
+    
+    isTest = true;
+    isNew = false;
+    isPCV = false;
+    
+    Sensitivity_Test = [];
+    Specificity_New = [];
+    
+    NewSetLabels = [];
+    set(lblNewSetLabels,'string', 'Not selected'); 
+    NewSetName = tvarname{1};
+    end
+end
+end
+
 function btnNewSet_Callback(~, ~)
 
     m_training = 0;
@@ -1439,10 +1583,6 @@ if ~isempty(tvar)
     else
         ok = 2;
         set(btnPredictBuild,'Enable','on');
-        set(btnPredictSave,'Enable','off');
-        set(btnPredictGraph,'Enable','off'); 
-        set(btnPredictGraphExtremeNew,'Enable','off');
-        set(btnPredictGraphExtremeTest,'Enable','off');
     end
 
     end
@@ -1451,6 +1591,25 @@ if ~isempty(tvar)
     set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
     NewSet = new_set;
     set(btnNewSetLabels,'Enable','on');
+    
+    set(btnPredictSave,'Enable','off');
+    set(btnPredictGraph,'Enable','off');
+    set(btnPredictGraphExtremeNew,'Enable','off');
+    set(btnPredictGraphExtremeTest,'Enable','off');
+    
+    set(lblWarning,'String','');
+    set(lblBeta,'String','');
+    
+    set(lblSamples,'string', '');
+    set(lblExtremes,'string', '');
+    set(btnPredictStatVsPC,'Visible', 'off');
+    
+    Sensitivity_Test = [];
+    Specificity_New = [];
+    
+    isTest = false;
+    isNew = true;
+    isPCV = false;
     
     NewSetLabels = [];
     set(lblNewSetLabels,'string', 'Not selected'); 
@@ -1465,7 +1624,7 @@ end
     %m_training = 0;
     %n_training = 0;
     
-    [n_training,m_training]=size(TrainingSet);
+    [n_training,~]=size(TrainingSet);
      
     prompt = {'Number of segments:'};
     dlgtitle = 'PCV options';
@@ -1495,12 +1654,24 @@ end
         
         assignin('base', NewSetName, NewSet);
         
+        isNew = false;
+        isTest = false;
+        isPCV = true;
         
-            set(btnPredictBuild,'Enable','on');
-            set(btnPredictSave,'Enable','off');
-            set(btnPredictGraph,'Enable','off'); 
-            set(btnPredictGraphExtremeNew,'Enable','off');
-            set(btnPredictGraphExtremeTest,'Enable','off');
+        set(btnPredictBuild,'Enable','on');
+        set(btnPredictGraph,'Enable','off');
+        set(btnPredictGraphExtremeNew,'Enable','off');
+        set(btnPredictGraphExtremeTest,'Enable','off');
+
+        set(lblWarning,'String','');
+        set(lblBeta,'String','');
+        
+        set(lblSamples,'string', '');
+        set(lblExtremes,'string', '');
+        set(btnPredictStatVsPC,'Visible', 'off');
+        
+        Sensitivity_Test = [];
+        Specificity_New = [];
     end
      
  else
@@ -1525,6 +1696,7 @@ set(lblBeta,'String','');
 
 set(lblSamples,'string', '');
 set(lblExtremes,'string', '');
+set(btnPredictStatVsPC,'Visible', 'off');
 
 NewSetLabels = [];
 NewSetName = [];
@@ -1533,6 +1705,14 @@ set(btnNewSetLabels,'Enable','off');
 set(tbBeta,'String', '0.01');
 set(tbBeta,'Enable', 'off');
 set(chkCalcAlpha,'value', 0);
+
+isNew = false;
+isTest = false;
+isPCV = false;
+
+Sensitivity_Test = [];
+Specificity_New = [];
+
 end
 
 function CheckPC()
@@ -1664,6 +1844,281 @@ else
 end
 end
 
+    function btnModelSensitivityVsPC_Callback(~,~)
+        if(isempty(Sensitivity_Model))
+           modelStat();
+        end
+        f = figure;
+        hold on;
+        set(f,'name','Sensitivity vs. PCs','numbertitle','off');
+        title('Model Sensitivity vs. PCs plot.', 'FontWeight', 'bold');
+        xlabel('PC', 'FontWeight', 'bold');
+        ylabel('Sensitivity (%)', 'FontWeight', 'bold');
+        xlim([0 numPC_Stat(end)+1])
+        ylim([0 110])
+        
+        ff = plot(numPC_Stat,Sensitivity_Model*100,'-o');
+        legend(ff,'Sensitivity');
+    end
+
+    function btnModelDoFvsPC_Callback(~,~)
+        if(isempty(Sensitivity_Model))
+           modelStat();
+        end
+        f = figure;
+        hold on;
+        set(f,'name','DoF vs. PCs','numbertitle','off');
+        title('Model DoF vs. PCs plot.', 'FontWeight', 'bold');
+        xlabel('PC', 'FontWeight', 'bold');
+        ylabel('DoF', 'FontWeight', 'bold');
+        xlim([0 numPC_Stat(end)+1])
+        ylim([0 260])
+        ff1 = plot(numPC_Stat,OD_DoF_Stat,'-o');
+        ff2 = plot(numPC_Stat,SD_DoF_Stat,'-o');
+        legend([ff1,ff2],'OD', 'SD');
+        legend('Location','northwest')
+    end
+
+    function btnPredictStatVsPC_Callback(~,~)
+        if(isempty(Sensitivity_Test) && (isTest || isPCV) || isempty(Specificity_New) && isNew)
+            new_test_Stat();
+        end
+        if isNew
+            f = figure;
+            hold on;
+            set(f,'name','Specificity vs. PCs','numbertitle','off');
+            title('New set Specificity vs. PCs plot.', 'FontWeight', 'bold');
+            xlabel('PC', 'FontWeight', 'bold');
+            ylabel('Specificity (%)', 'FontWeight', 'bold');
+            xlim([0 numPC_Stat(end)+1])
+            ylim([0 110])
+            
+            ff = plot(numPC_Stat,Specificity_New*100,'-o');
+            legend(ff,'Specificity');
+        else
+            if isTest
+               str =  'Test set';
+            else
+               str =  'PCV set';
+            end
+
+            f = figure;
+            hold on;
+            set(f,'name','Sensitivity vs. PCs','numbertitle','off');
+            title(sprintf('%s Sensitivity vs. PCs plot.', str), 'FontWeight', 'bold');
+            xlabel('PC', 'FontWeight', 'bold');
+            ylabel('Sensitivity (%)', 'FontWeight', 'bold');
+            xlim([0 numPC_Stat(end)+1])
+            ylim([0 110])
+            
+            ff = plot(numPC_Stat,Sensitivity_Test*100,'-o');
+            legend(ff,'Sensitivity');
+        end
+    end
+
+    function modelStat(~,~)
+        if(~isempty(TrainingSet))
+            h = waitbar(0, 'Please wait...');
+            XTest = TrainingSet;
+            vmax = min(size(XTest));
+            
+            if get(chkCentering,'Value') == 1
+                vmax = vmax - 1;
+            end
+            
+            if get(chkScaling,'Value') == 1
+                vmax = vmax - 1;
+            end
+            
+            numPC_Stat = 1:vmax;
+            Sensitivity_Model = zeros(1,vmax);
+            SD_DoF_Stat = zeros(1,vmax);
+            OD_DoF_Stat = zeros(1,vmax);
+            
+            waitbar(1/vmax, h);
+            mm = DDSimca(TrainingSet, 1);
+            
+            mm.Gamma = str2double(get(tbGamma,'string'));
+            
+            border_types = get(ddlArea,'string');
+            selected_type = get(ddlArea,'value');
+            mm.BorderType = border_types{selected_type};
+            
+            estimation_methods = get(ddlEstimation,'string');
+            selected_method = get(ddlEstimation,'value');
+            mm.EstimationMethod = estimation_methods{selected_method};
+            
+            
+            if get(chkCentering,'Value') == 1
+                mm.Centering = true;
+            else
+                mm.Centering = false;
+            end
+            
+            if get(chkScaling,'Value') == 1
+                mm.Scaling = true;
+            else
+                mm.Scaling = false;
+            end
+            
+            alphaAuto = get(chkAlphaAuto, 'Value');
+            if alphaAuto == 1
+                mm.AutoAlpha = true;
+            else
+                mm.AutoAlpha = false;
+                mm.Alpha = str2double(get(tbAlpha,'string'));
+            end
+            
+            if get(ddlAxesTransform, 'Value') == 1
+                mm.Transformation = 'log';
+            else
+                mm.Transformation = 'none';
+            end
+            
+            [n,~] = size(mm.TrainingSet);
+            
+            extTraining = mm.ExtremeObjects;
+            outTraining = mm.OutlierObjects;
+            regular = sum(~(extTraining + outTraining));
+            
+            Sensitivity_Model(1) = regular/n;
+            SD_DoF_Stat(1) = mm.DoF_SD;
+            OD_DoF_Stat(1) = mm.DoF_OD;
+                       
+            for i = 2:vmax
+                waitbar(i/vmax, h);
+                mm.numPC = i;
+                
+                extTraining = mm.ExtremeObjects;
+                outTraining = mm.OutlierObjects;
+                regular = sum(~(extTraining + outTraining));
+                
+                Sensitivity_Model(i) = regular/n;
+                SD_DoF_Stat(i) = mm.DoF_SD;
+                OD_DoF_Stat(i) = mm.DoF_OD;
+            end
+            delete(h);
+        end
+        
+    end
+
+    function new_test_Stat(~,~)
+        if(~isempty(TrainingSet))
+            h = waitbar(0, 'Please wait...');
+            XTest = TrainingSet;
+            vmax = min(size(XTest));
+            
+            if get(chkCentering,'Value') == 1
+                vmax = vmax - 1;
+            end
+            
+            if get(chkScaling,'Value') == 1
+                vmax = vmax - 1;
+            end
+            
+            numPC_Stat = 1:vmax;
+            if isTest || isPCV
+               Sensitivity_Test = zeros(1,vmax);
+            end
+            
+            if isNew
+               Specificity_New = zeros(1,vmax);
+            end
+            
+            Sensitivity_Model = zeros(1,vmax);
+            SD_DoF_Stat = zeros(1,vmax);
+            OD_DoF_Stat = zeros(1,vmax);
+            
+            waitbar(1/vmax, h);
+            mm = DDSimca(TrainingSet, 1);
+            
+            mm.Gamma = str2double(get(tbGamma,'string'));
+            
+            border_types = get(ddlArea,'string');
+            selected_type = get(ddlArea,'value');
+            mm.BorderType = border_types{selected_type};
+            
+            estimation_methods = get(ddlEstimation,'string');
+            selected_method = get(ddlEstimation,'value');
+            mm.EstimationMethod = estimation_methods{selected_method};
+            
+            
+            if get(chkCentering,'Value') == 1
+                mm.Centering = true;
+            else
+                mm.Centering = false;
+            end
+            
+            if get(chkScaling,'Value') == 1
+                mm.Scaling = true;
+            else
+                mm.Scaling = false;
+            end
+            
+            alphaAuto = get(chkAlphaAuto, 'Value');
+            if alphaAuto == 1
+                mm.AutoAlpha = true;
+            else
+                mm.AutoAlpha = false;
+                mm.Alpha = str2double(get(tbAlpha,'string'));
+            end
+            
+            if get(ddlAxesTransform, 'Value') == 1
+                mm.Transformation = 'log';
+            else
+                mm.Transformation = 'none';
+            end
+            
+            [n,~] = size(mm.TrainingSet);
+            [n1,~] = size(NewSet);
+            
+            extTraining = mm.ExtremeObjects;
+            outTraining = mm.OutlierObjects;
+            regular = sum(~(extTraining + outTraining));
+            
+            tt = DDSTask(mm, NewSet);
+            
+            if isTest || isPCV
+                regular_test = sum(~(tt.ExternalObjects)); 
+               Sensitivity_Test(1) = regular_test/n1;
+            end
+            
+            if isNew
+               new_test = sum(tt.ExternalObjects); 
+               Specificity_New(1) = new_test/n1;
+            end
+            
+            
+            Sensitivity_Model(1) = regular/n;
+            SD_DoF_Stat(1) = mm.DoF_SD;
+            OD_DoF_Stat(1) = mm.DoF_OD;
+                       
+            for i = 2:vmax
+                waitbar(i/vmax, h);
+                mm.numPC = i;
+                tt = DDSTask(mm, NewSet);
+                if isTest || isPCV
+                    regular_test = sum(~(tt.ExternalObjects));
+                    Sensitivity_Test(i) = regular_test/n1;
+                end
+                
+                if isNew
+                    new_test = sum(tt.ExternalObjects);
+                    Specificity_New(i) = new_test/n1;
+                end
+                
+                extTraining = mm.ExtremeObjects;
+                outTraining = mm.OutlierObjects;
+                regular = sum(~(extTraining + outTraining));
+                
+                Sensitivity_Model(i) = regular/n;
+                SD_DoF_Stat(i) = mm.DoF_SD;
+                OD_DoF_Stat(i) = mm.DoF_OD;
+            end
+            delete(h);
+        end
+        
+    end
 end
 
 

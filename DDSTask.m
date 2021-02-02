@@ -111,6 +111,10 @@ classdef DDSTask<handle
       Labels % (optional) a cellarray containing the labels of samples in the Training Set, which are shown on the Acceptance and Extreme plot . 
       ShowLabels = true % Show the labels of samples in the Training Set (logical), values = true (default)|false
       AcceptancePlotTitle % Additional figure title shown on the acceptance plot
+      
+      isPCV
+      isNew
+      isTest  
    end
    
    properties (Access = private)
@@ -179,10 +183,21 @@ classdef DDSTask<handle
 
             if isempty(self.AcceptancePlotTitle)
                 set(handle,'name','Acceptance plot','numbertitle','off');
-                title('Acceptance plot. New set', 'FontWeight', 'bold');
+                title('Acceptance plot', 'FontWeight', 'bold');
             else
+                plot_title = '';
+                if self.isNew
+                   plot_title = 'New set'; 
+                end
+                if self.isTest
+                   plot_title = 'Test set';
+                end
+                if self.isPCV
+                   plot_title = 'PCV set'; 
+                end
+                
                 set(handle,'name',sprintf('Acceptance plot - %s', self.AcceptancePlotTitle),'numbertitle','off');
-                title(sprintf('Acceptance plot. New set - %s', self.AcceptancePlotTitle), 'FontWeight', 'bold', 'Interpreter', 'none');
+                title(sprintf('Acceptance plot. %s - %s', plot_title, self.AcceptancePlotTitle), 'FontWeight', 'bold', 'Interpreter', 'none');
             end
             
             hold on;

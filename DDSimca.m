@@ -343,6 +343,13 @@ classdef  DDSimca<handle
             
         end
         
+        function set.numPC(self,value)
+            %Gamma get/set
+            self.numPC = value;
+            
+            self.dds_process();
+        end
+        
         function set.Gamma(self,value)
             %Gamma get/set
             self.Gamma = value;
