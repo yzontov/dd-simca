@@ -253,13 +253,13 @@ if(ispc)
 %  'Position', [20 402 100 15]) ;
 
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'New',...
-    'Position', [20 420 45 30], 'callback', @btnNewSet_Callback);
+    'Position', [20 420 40 30], 'callback', @btnNewSet_Callback);
 %uicontrol('Parent', tab_predict, 'Style', 'text', 'String', ' or', ...
 % 'Position', [80 420 10 30]);
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'Test',...
-    'Position', [63 410 45 30], 'callback', @btnTestSet_Callback);
+    'Position', [63 420 40 30], 'callback', @btnTestSet_Callback);
 uicontrol('Parent', tab_predict, 'Style', 'pushbutton', 'String', 'PCV',...
-    'Position', [106 420 45 30], 'callback', @btnPCV_Callback);
+    'Position', [106 420 40 30], 'callback', @btnPCV_Callback);
 
 lblNewSet = uicontrol('Parent', tab_predict, 'Style', 'text', 'String', 'Not selected', ...
  'Position', [35 402 100 15]) ;
