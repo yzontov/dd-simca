@@ -27,6 +27,8 @@ isPCV = false;
 isNew = false;
 isTest = false;
 
+pcvFolds = [];
+
 OD_DoF_Stat = [];
 SD_DoF_Stat = [];
 Sensitivity_Model = [];
@@ -147,10 +149,15 @@ chkScaling = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Scal
 
 %model params
 %lblNumPC
-uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Number of Principal Components', ...
- 'Position', [20 280 200 15], 'HorizontalAlignment', 'left'); 
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'PCs', ...
+ 'Position', [20 280 20 15], 'HorizontalAlignment', 'left'); 
 tbNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
-    'Value',1, 'Position', [180 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+    'Value',1, 'Position', [42 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Max PCs', ...
+ 'Position', [135 280 50 15], 'HorizontalAlignment', 'left'); 
+tbMaxNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
+    'Value',1, 'Position', [180 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_MaxNumPC);
 
 %lblAlpha
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type I error (alpha)', ...
@@ -1135,6 +1142,20 @@ if ~isempty(Model.TrainingSet)
 TrainingSet = Model.TrainingSet;
 [n,m]=size(TrainingSet);
 set(lblTrainingSet,'string', sprintf('[%d x %d]', n, m));
+
+    XTest = TrainingSet;
+    vmax = min(size(XTest));
+
+    if get(chkCentering,'Value') == 1
+        vmax = vmax - 1;
+    end
+
+    if get(chkScaling,'Value') == 1
+        vmax = vmax - 1;
+    end
+    
+    set(tbMaxNumPC,'string',sprintf('%d',min(idivide(int16(vmax),2), 20)));
+
 else
 TrainingSet = [];
 set(lblTrainingSet,'string', 'Not selected');
@@ -1275,6 +1296,7 @@ Task.Labels = NewSetLabels;
 Task.isNew = isNew;
 Task.isTest = isTest;
 Task.isPCV = isPCV;
+Task.pcvFolds = pcvFolds;
 
 if get(chkCalcAlpha,'Value')
     Task.CalculateBeta = ~get(chkCalcAlpha,'Value');
@@ -1384,6 +1406,7 @@ set(btnNewSetLabels,'Enable','on');
 isNew = Task.isNew;
 isTest = Task.isTest;
 isPCV = Task.isPCV;
+pcvFolds = Task.pcvFolds;
 
 %if(Task.CalculateBeta)
 %set(chkCalcAlpha,'Value',1);
@@ -1491,6 +1514,20 @@ if ~isempty(tvar)
     set(btnModelSave,'Enable','off');
     
     ClearCurrentModel();
+    
+    XTest = TrainingSet;
+    vmax = min(size(XTest));
+
+    if get(chkCentering,'Value') == 1
+        vmax = vmax - 1;
+    end
+
+    if get(chkScaling,'Value') == 1
+        vmax = vmax - 1;
+    end
+    
+    set(tbMaxNumPC,'string',sprintf('%d',min(idivide(int16(vmax),2), 20)));
+    
 end
 end
 
@@ -1546,6 +1583,7 @@ if ~isempty(tvar)
     isNew = false;
     isPCV = false;
     
+    pcvFolds = [];
     Sensitivity_Test = [];
     Specificity_New = [];
     
@@ -1610,6 +1648,7 @@ if ~isempty(tvar)
     isTest = false;
     isNew = true;
     isPCV = false;
+    pcvFolds = [];
     
     NewSetLabels = [];
     set(lblNewSetLabels,'string', 'Not selected'); 
@@ -1640,6 +1679,8 @@ end
             warndlg(sprintf('Number of segments should greater than 1 and less than %d!', n_training+1));
             return;
         end
+        
+        pcvFolds = vars;
         
         NewSet = pcv(TrainingSet, Model.numPC, vars, Model.Centering, Model.Scaling);
         [n, m] = size(NewSet);
@@ -1730,6 +1771,11 @@ if get(chkScaling,'Value') == 1
 vmax = vmax - 1;
 end
 
+vcur = str2double(get(tbMaxNumPC,'string'));
+if vcur < 1 || vcur > vmax
+    set(tbMaxNumPC,'string',sprintf('%d',min(idivide(int16(vmax),2), 20)));
+end
+
 val = str2double(str);
 if val < 1 || val > vmax
        set(tbNumPC,'string','2');
@@ -1777,6 +1823,40 @@ else
 end
 
 end
+
+function Input_MaxNumPC(src, ~)
+str=get(src,'String');
+if(~isempty(TrainingSet))
+
+XTest = TrainingSet;
+vmax = min(size(XTest));
+
+if get(chkCentering,'Value') == 1
+vmax = vmax - 1;
+end
+
+if get(chkScaling,'Value') == 1
+vmax = vmax - 1;
+end
+
+val = str2double(str);
+if isempty(val) || isnan(val)
+    set(src,'string',sprintf('%d',min(idivide(int16(vmax),2), 20)));
+    warndlg('Input must be numerical');
+else
+    if val < 1 || val > vmax
+       set(src,'string',sprintf('%d',min(idivide(int16(vmax),2), 20)));
+       warndlg(sprintf('Maximum number of Principal Components should be greater than 0 and less than %d!', vmax+1));
+    end
+end
+
+else
+    set(src,'string','2');
+    warndlg('You should select the Training Set first!');
+end
+
+end
+
 
 function Input_Alpha(src, ~)
 str=get(src,'String');
@@ -1919,16 +1999,8 @@ end
     function modelStat(~,~)
         if(~isempty(TrainingSet))
             h = waitbar(0, 'Please wait...');
-            XTest = TrainingSet;
-            vmax = min(size(XTest));
-            
-            if get(chkCentering,'Value') == 1
-                vmax = vmax - 1;
-            end
-            
-            if get(chkScaling,'Value') == 1
-                vmax = vmax - 1;
-            end
+
+            vmax = str2double(get(tbMaxNumPC,'string'));
             
             numPC_Stat = 1:vmax;
             Sensitivity_Model = zeros(1,vmax);
@@ -2005,15 +2077,11 @@ end
     function new_test_Stat(~,~)
         if(~isempty(TrainingSet))
             h = waitbar(0, 'Please wait...');
-            XTest = TrainingSet;
-            vmax = min(size(XTest));
+
+            vmax = str2double(get(tbMaxNumPC,'string'));
             
-            if get(chkCentering,'Value') == 1
-                vmax = vmax - 1;
-            end
-            
-            if get(chkScaling,'Value') == 1
-                vmax = vmax - 1;
+            if isPCV
+               pcvSet = pcv(TrainingSet, vmax, pcvFolds, Model.Centering, Model.Scaling); 
             end
             
             numPC_Stat = 1:vmax;
@@ -2076,7 +2144,11 @@ end
             outTraining = mm.OutlierObjects;
             regular = sum(~(extTraining + outTraining));
             
-            tt = DDSTask(mm, NewSet);
+            if isPCV
+                tt = DDSTask(mm, pcvSet);
+            else
+                tt = DDSTask(mm, NewSet);
+            end
             
             if isTest || isPCV
                 regular_test = sum(~(tt.ExternalObjects)); 
@@ -2096,7 +2168,13 @@ end
             for i = 2:vmax
                 waitbar(i/vmax, h);
                 mm.numPC = i;
-                tt = DDSTask(mm, NewSet);
+                
+                if isPCV
+                    tt = DDSTask(mm, pcvSet);
+                else
+                    tt = DDSTask(mm, NewSet);
+                end
+                
                 if isTest || isPCV
                     regular_test = sum(~(tt.ExternalObjects));
                     Sensitivity_Test(i) = regular_test/n1;

@@ -114,7 +114,9 @@ classdef DDSTask<handle
       
       isPCV
       isNew
-      isTest  
+      isTest 
+      
+      pcvFolds
    end
    
    properties (Access = private)
