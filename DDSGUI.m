@@ -95,10 +95,17 @@ chkScaling = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Scal
 
 %model params
 %lblNumPC
-uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Number of Principal Components', ...
- 'Position', [20 280 200 15], 'HorizontalAlignment', 'left'); 
+
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'PCs', ...
+ 'Position', [20 280 25 15], 'HorizontalAlignment', 'left'); 
 tbNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
-    'Value',1, 'Position', [180 280 100 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+    'Value',1, 'Position', [42 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Max PCs', ...
+ 'Position', [135 280 50 15], 'HorizontalAlignment', 'left'); 
+tbMaxNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
+    'Value',1, 'Position', [180 280 100 20], 'BackgroundColor', 'white', 'callback', @Input_MaxNumPC);
+
 
 %lblAlpha
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type I error (alpha)', ...
@@ -208,10 +215,15 @@ chkScaling = uicontrol('Parent', tab_model, 'Style', 'checkbox', 'String', 'Scal
 
 %model params
 %lblNumPC
-uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Number of Principal Components', ...
- 'Position', [20 280 200 15], 'HorizontalAlignment', 'left'); 
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'PCs', ...
+ 'Position', [20 280 20 15], 'HorizontalAlignment', 'left'); 
 tbNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
-    'Value',1, 'Position', [180 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+    'Value',1, 'Position', [42 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_NumPC);
+
+uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Max PCs', ...
+ 'Position', [135 280 50 15], 'HorizontalAlignment', 'left'); 
+tbMaxNumPC = uicontrol('Parent', tab_model, 'Style', 'edit', 'String', '2',...
+    'Value',1, 'Position', [180 280 80 20], 'BackgroundColor', 'white', 'callback', @Input_MaxNumPC);
 
 %lblAlpha
 uicontrol('Parent', tab_model, 'Style', 'text', 'String', 'Type I error (alpha)', ...
@@ -1751,6 +1763,7 @@ isNew = false;
 isTest = false;
 isPCV = false;
 
+pcvFolds = [];
 Sensitivity_Test = [];
 Specificity_New = [];
 
