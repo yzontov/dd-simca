@@ -393,7 +393,7 @@ set(group_set_plot, 'Position', [0.02   0.84   0.96  0.16]);
 if(ispc)
 %lblAxesTransform
 uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'Axes transformation', ...
- 'Position', [20 420 100 15]); 
+ 'Position', [20 420 120 15]); 
 ddlAxesTransform = uicontrol('Parent', tab_settings, 'Style', 'popupmenu', 'String', {'ln(1+x/x0)','none'},...
     'Value',1, 'Position', [160 410 100 30], 'BackgroundColor', 'white');
 
