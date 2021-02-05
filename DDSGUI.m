@@ -1868,6 +1868,15 @@ else
     warndlg('You should select the Training Set first!');
 end
 
+if ~isempty(numPC_Stat) && length(numPC_Stat) ~= val
+OD_DoF_Stat = [];
+SD_DoF_Stat = [];
+Sensitivity_Model = [];
+Sensitivity_Test = [];
+Specificity_New = [];
+numPC_Stat = [];
+end
+
 end
 
 
