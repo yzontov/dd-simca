@@ -117,6 +117,8 @@ classdef DDSTask<handle
       isTest 
       
       pcvFolds
+      
+      OutlierObjects
    end
    
    properties (Access = private)
@@ -167,16 +169,25 @@ classdef DDSTask<handle
         end
        
       
-      function DDSobj = DDSTask(Model, NewSet)
+      function DDSobj = DDSTask(Model, NewSet, Type)
           %constructor 
          DDSobj.Model = Model;
          DDSobj.NewSet = NewSet;
          
+         if nargin == 2
+            DDSobj.isNew = true;
+            DDSobj.isTest = false;
+            DDSobj.isPCV = false;
+         else
+            DDSobj.isNew = Type(1);
+            DDSobj.isTest = Type(2);
+            DDSobj.isPCV = Type(3);
+         end
+         
          DDSobj.dds_test(NewSet, DDSobj.CalculateBeta, DDSobj.Beta);
          
       end
-      
-      
+           
       function handle = AcceptancePlot(self)
           %create acceptance plot
          transform = self.Transformation;
@@ -221,30 +232,72 @@ classdef DDSTask<handle
             [x,y] = DDSimca.plot_border(crit_levels, self.Model.BorderType, transform);
             plot(x, y, '-g');
         end
-                OD_New = DDSimca.transform_(transform, self.OD/self.Model.OD_mean);
-                SD_New = DDSimca.transform_(transform, self.SD/self.Model.SD_mean);
-                extNew = self.ExternalObjects;
-                %outNew = dds_result.test.outlier;
+        
+        if (self.isTest || self.isPCV) && ~isempty(self.Model.OutlierLevel)
+            out_levels = self.Model.OutlierLevel;
+            [x,y] = DDSimca.plot_border(out_levels, self.Model.BorderType, transform);
             
-                %plot(SD_New, OD_New,'ob','MarkerFaceColor','b');
-                plot(SD_New(extNew == 0),OD_New(extNew == 0),'og','MarkerFaceColor','g');
-                plot(SD_New(extNew == 1),OD_New(extNew == 1),'or','MarkerFaceColor','r');
-
-                if(self.ShowLabels)
-                    labels = strread(num2str(1:size(self.NewSet, 1)),'%s');
-                    if(~isempty(self.Labels))
-                        labels = self.Labels;
-                    end
-                    
-                     dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
-                     text(SD_New+dx, OD_New+dy, labels, 'Interpreter', 'none');
+            plot(x, y, '-r');
+        end
+        
+        oD_New = DDSimca.transform_(transform, self.OD/self.Model.OD_mean);
+        sD_New = DDSimca.transform_(transform, self.SD/self.Model.SD_mean);
+        
+        if (self.isTest || self.isPCV)
+            
+            if ~isempty(self.OutlierObjects)
+                extTraining = self.ExternalObjects;
+                outTraining = self.OutlierObjects;
+                regular = plot(sD_New(~(extTraining + outTraining)),oD_New(~(extTraining + outTraining)),'og','MarkerFaceColor','g');
+                extreme = plot(sD_New(extTraining == 1),oD_New(extTraining == 1),'s','Color',[1 0.65 0],'MarkerFaceColor',[1 0.65 0]);
+                outlier = plot(sD_New(outTraining == 1),oD_New(outTraining == 1),'rs','MarkerFaceColor','r');
+                if sum(extTraining == 1) > 0 && sum(outTraining == 1) > 0
+                    legend([regular, extreme, outlier],'regular','extremes','outliers');
                 end
+                if sum(extTraining == 1) > 0 && sum(outTraining == 1) == 0
+                    legend([regular, extreme],'regular','extremes');
+                end
+                if sum(extTraining == 1) == 0 && sum(outTraining == 1) > 0
+                    legend([regular, outlier],'regular','outliers');
+                end
+                if sum(extTraining == 1) == 0 && sum(outTraining == 1) == 0
+                    legend(regular,'regular');
+                end
+            else
+                extTraining = self.OutlierObjects;
+                regular = plot(sD_New(extTraining == 0),oD_New(extTraining == 0),'og','MarkerFaceColor','g');
+                extreme = plot(sD_New(extTraining == 1),oD_New(extTraining == 1),'s','Color',[1 0.65 0],'MarkerFaceColor',[1 0.65 0]);
+                if sum(extTraining == 1) > 0
+                    legend([regular, extreme],'regular','extremes');
+                end
+                if sum(extTraining == 1) == 0
+                    legend(regular,'regular');
+                end
+            end
             
-
+            legend('boxon');
+            
+        else
+            extNew = self.ExternalObjects;
+            plot(sD_New(extNew == 0),oD_New(extNew == 0),'og','MarkerFaceColor','g');
+            plot(sD_New(extNew == 1),oD_New(extNew == 1),'or','MarkerFaceColor','r');
+        end
+        
+        
+        if(self.ShowLabels)
+            labels = strread(num2str(1:size(self.NewSet, 1)),'%s');
+            if(~isempty(self.Labels))
+                labels = self.Labels;
+            end
+            
+            dx = 0.01; dy = 0.01; % displacement so the text does not overlay the data points
+            text(sD_New+dx, oD_New+dy, labels, 'Interpreter', 'none');
+        end
+        
             hold off;
             DDSimca.randomize_plot_position(handle);
       end
-          
+      
       function [handle, N, Nplus, Nminus] = TestSamplesExtremePlot(self)
           %create extreme plot
             oD = self.OD/self.Model.OD_mean;
@@ -409,7 +462,6 @@ D1 = self.Model.EigenMatrix;
 av_sd = self.Model.SD_mean;
 av_od = self.Model.OD_mean;
 dcrit = self.Model.CriticalLevel;
-%dout = model.level.outlier;
 
 switch self.Model.BorderType    
     case 'rectangle'
@@ -425,6 +477,10 @@ v_extNew=DDSimca.extremes(v_odNew/av_od,v_sdNew/av_sd, dcrit, border_type);
 self.SD = v_sdNew;
 self.OD = v_odNew;
 self.ExternalObjects = v_extNew;
+
+if ~isempty(self.Model.Gamma) && (self.isTest || self.isPCV)
+    self.OutlierObjects = DDSimca.extremes(v_odNew/av_od,v_sdNew/av_sd, self.Model.OutlierLevel, border_type);
+end
 
 if calc_beta
     beta_res = self.beta_error(Xnew, 0);

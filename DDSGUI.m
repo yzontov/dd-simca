@@ -1301,13 +1301,10 @@ function btnPredictBuild_Callback(~, ~)
 h = waitbar(0, 'Please wait...');
 try
 
-Task = DDSTask(Model, NewSet);
+Task = DDSTask(Model, NewSet, [isNew, isTest, isPCV]);
 Task.AcceptancePlotTitle = NewSetName;
 Task.Labels = NewSetLabels;
 
-Task.isNew = isNew;
-Task.isTest = isTest;
-Task.isPCV = isPCV;
 Task.pcvFolds = pcvFolds;
 
 if get(chkCalcAlpha,'Value')
@@ -1956,8 +1953,8 @@ end
         title('Model Sensitivity vs. PCs plot.', 'FontWeight', 'bold');
         xlabel('PC', 'FontWeight', 'bold');
         ylabel('Sensitivity (%)', 'FontWeight', 'bold');
-        xlim([0 numPC_Stat(end)+1])
-        ylim([0 110])
+        xlim([0 numPC_Stat(end)+1]);
+        ylim([max(min(Sensitivity_Model*100)-5, 0) max(Sensitivity_Model*100) + 5]);
         
         ff = plot(numPC_Stat,Sensitivity_Model*100,'-o');
         legend(ff,'Sensitivity');
@@ -1974,7 +1971,7 @@ end
         xlabel('PC', 'FontWeight', 'bold');
         ylabel('DoF', 'FontWeight', 'bold');
         xlim([0 numPC_Stat(end)+1])
-        ylim([0 260])
+        ylim([max(min([OD_DoF_Stat,SD_DoF_Stat])-5, 0) max([OD_DoF_Stat,SD_DoF_Stat]) + 5])
         ff1 = plot(numPC_Stat,OD_DoF_Stat,'-o');
         ff2 = plot(numPC_Stat,SD_DoF_Stat,'-o');
         legend([ff1,ff2],'OD', 'SD');
@@ -1993,7 +1990,7 @@ end
             xlabel('PC', 'FontWeight', 'bold');
             ylabel('Specificity (%)', 'FontWeight', 'bold');
             xlim([0 numPC_Stat(end)+1])
-            ylim([0 110])
+            ylim([max(min(Specificity_New*100)-5, 0) max(Specificity_New*100) + 5]);
             
             ff = plot(numPC_Stat,Specificity_New*100,'-o');
             legend(ff,'Specificity');
@@ -2011,7 +2008,7 @@ end
             xlabel('PC', 'FontWeight', 'bold');
             ylabel('Sensitivity (%)', 'FontWeight', 'bold');
             xlim([0 numPC_Stat(end)+1])
-            ylim([0 110])
+            ylim([max(min(Sensitivity_Test*100)-5, 0) max(Sensitivity_Test*100) + 5]);
             
             ff = plot(numPC_Stat,Sensitivity_Test*100,'-o');
             legend(ff,'Sensitivity');
@@ -2167,9 +2164,9 @@ end
             regular = sum(~(extTraining + outTraining));
             
             if isPCV
-                tt = DDSTask(mm, pcvSet);
+                tt = DDSTask(mm, pcvSet, [isNew, isTest, isPCV]);
             else
-                tt = DDSTask(mm, NewSet);
+                tt = DDSTask(mm, NewSet, [isNew, isTest, isPCV]);
             end
             
             if isTest || isPCV
@@ -2192,9 +2189,9 @@ end
                 mm.numPC = i;
                 
                 if isPCV
-                    tt = DDSTask(mm, pcvSet);
+                    tt = DDSTask(mm, pcvSet, [isNew, isTest, isPCV]);
                 else
-                    tt = DDSTask(mm, NewSet);
+                    tt = DDSTask(mm, NewSet, [isNew, isTest, isPCV]);
                 end
                 
                 if isTest || isPCV
