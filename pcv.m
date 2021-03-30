@@ -16,7 +16,7 @@
 % faster.
 %
 % Based on
-% Sergey Kucheryavskiy, 2020
+% Sergey Kucheryavskiy, 2021
 % https://github.com/svkucheryavski/pcv
 %
 % See also: PCVOLD
