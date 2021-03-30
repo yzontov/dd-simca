@@ -437,6 +437,12 @@ chkShowLabelsTraining = uicontrol('Parent', tab_settings, 'Style', 'checkbox', '
 
 chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'String', 'Show sample labels for New Set',...
     'Position', [300 400 200 20], 'Value', 1);
+
+uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'PCV algorithm', ...
+ 'Position', [15 320 80 15]); 
+ddlPCVAlgorithm = uicontrol('Parent', tab_settings, 'Style', 'popupmenu', 'String', {'no-rotation','rotation'},...
+    'Value',1, 'Position', [160 310 100 30], 'BackgroundColor', 'white');
+
 end
 
 if(isunix && ~ismac)
@@ -451,6 +457,12 @@ chkShowLabelsTraining = uicontrol('Parent', tab_settings, 'Style', 'checkbox', '
 
 chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'String', 'Show sample labels for New Set',...
     'Position', [300 410 240 20], 'Value', 1);
+
+uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'PCV algorithm', ...
+ 'Position', [15 320 80 15]); 
+ddlPCVAlgorithm = uicontrol('Parent', tab_settings, 'Style', 'popupmenu', 'String', {'no-rotation','rotation'},...
+    'Value',1, 'Position', [160 310 100 30], 'BackgroundColor', 'white');
+
 end
 
 %actions 
