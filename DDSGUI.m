@@ -402,6 +402,9 @@ end
 group_set_plot = uipanel('Parent', tab_settings, 'Title', 'Plot');
 set(group_set_plot, 'Position', [0.02   0.84   0.96  0.16]);
 
+group_set_pcv = uipanel('Parent', tab_settings, 'Title', 'PCV');
+set(group_set_pcv, 'Position', [0.02   0.64   0.96  0.16]);
+
 if(ispc)
 %lblAxesTransform
 uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'Axes transformation', ...
@@ -414,6 +417,12 @@ chkShowLabelsTraining = uicontrol('Parent', tab_settings, 'Style', 'checkbox', '
 
 chkShowLabelsNew = uicontrol('Parent', tab_settings, 'Style', 'checkbox', 'String', 'Show sample labels for New Set',...
     'Position', [300 400 200 30], 'Value', 1);
+
+uicontrol('Parent', tab_settings, 'Style', 'text', 'String', 'PCV algorithm', ...
+ 'Position', [20 330 95 15]); 
+ddlPCVAlgorithm = uicontrol('Parent', tab_settings, 'Style', 'popupmenu', 'String', {'no-rotation','rotation'},...
+    'Value',1, 'Position', [160 320 100 30], 'BackgroundColor', 'white');
+
 end
 
 if(ismac)
@@ -1667,6 +1676,8 @@ end
 end
 
  function btnPCV_Callback(~, ~)
+     
+ pcv_algo = get(ddlPCVAlgorithm, 'Value');
 
  if ~isempty(Model)
     %m_training = 0;
@@ -1691,7 +1702,12 @@ end
         
         pcvFolds = vars;
         
-        NewSet = pcv(TrainingSet, Model.numPC, vars, Model.Centering, Model.Scaling);
+        if(pcv_algo == 1)
+            NewSet = pcv(TrainingSet, Model.numPC, vars, Model.Centering, Model.Scaling);
+        else
+            NewSet = pcvold(TrainingSet, Model.numPC, vars, Model.Centering, Model.Scaling);
+        end
+        
         [n, m] = size(NewSet);
         set(lblNewSet,'string', sprintf('[%d x %d]', n, m));
         

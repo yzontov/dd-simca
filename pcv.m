@@ -1,4 +1,4 @@
-% Compute matrix with pseudo-validation set
+% Compute matrix with pseudo-validation set 
 %
 % Arguments
 % ---------
@@ -10,16 +10,16 @@
 %
 % The method computes pseudo-validation matrix Xpv, based on PCA decomposition of calibration set X
 % and systematic (venetian blinds) cross-validation. It is assumed that data rows are ordered
-% correctly, so systematic cross-validation can be applied
+% correctly, so systematic cross-validation can be applied.
+%
+% This is a new version of the method which does not require rotations and thus
+% faster.
 %
 % Based on
 % Sergey Kucheryavskiy, 2020
-% https://github.com/svkucheryavski
+% https://github.com/svkucheryavski/pcv
 %
-% Cite as:
-% Kucheryavskiy, S., Zhilin, S., Rodionova, O., Pomerantsev A., 
-% Procrustes Cross-Validation—A Bridge between Cross-Validation and Independent Validation Sets. 
-% Analytical Chemistry, 92 (17), 2020. pp.11842–11850. DOI: 10.1021/acs.analchem.0c02175
+% See also: PCVOLD
 %
 function Xpv = pcv(X, nComp, nSeg, Center, Scale)
 
@@ -43,17 +43,24 @@ function Xpv = pcv(X, nComp, nSeg, Center, Scale)
    end
 
    % compute and save mean and standard deviation
-   if Center
+    if Center
       mX = mean(X);
-   else
+    else
       mX = zeros(1, nCols);
-   end
-
+    end
+   
    if Scale
       sX = std(X);
    else
       sX = ones(1, nCols);
    end
+   
+  function Xn = norm(X, v)
+      if (nargin == 1)
+          v = sqrt(sum(X.^2, 2));
+      end
+      Xn = diag(1./v) * X;    
+  end
 
    % autoscale the calibration set
    X = bsxfun(@minus, X, mX);
@@ -62,7 +69,8 @@ function Xpv = pcv(X, nComp, nSeg, Center, Scale)
    % create a global model
    [~, ~, P] = svd(X, 'econ');
    P = P(:, 1:nComp);
-
+   I = eye(nCols);
+   
    % create matrix with indices for cross-validation, so
    % each column is number of rows to be taken as local validation set
    % in corresponding segment
@@ -77,8 +85,10 @@ function Xpv = pcv(X, nComp, nSeg, Center, Scale)
    ind(ind<0) = [];
    [val_start, val_stop] = crossval_indexes(nRows, nSeg );
 
-   % prepare empty matrix for pseudo-validation set
+   % prepare empty matrix for pseudo-validation set and vector for
+   % distances
    Xpv = zeros(nRows, nCols);
+   qk = zeros(nRows, 1);
 
    % cv-loop
    for k = 1:nSeg
@@ -92,123 +102,29 @@ function Xpv = pcv(X, nComp, nSeg, Center, Scale)
       [~, ~, Pk] = svd(Xc, 'econ');
 
       Pk = Pk(:, 1:nComp);
+      Ek = Xk * (I - Pk * Pk');
+      qk(ind(val_start(k):val_stop(k))) = sum(Ek.^2, 2);
 
       % correct direction of loadings for local model
       a = acos(sum(P .* Pk)) < pi / 2;
       Pk = Pk * diag(a * 2 - 1);
 
-      % get rotation matrix between the PC spaces
-      R = getR(Pk, P);
-
-      % rotate the local validation set and save as a part of Xpv
-      Xpv(ind(val_start(k):val_stop(k)), :) = Xk * R';
+      % compute the explained part of the PV-set
+      Xpv(ind(val_start(k):val_stop(k)), :) = Xk * (Pk * P');
+   end      
+   
+   % compute orthogonal component (residuals)  and add to the PV-set
+   if nComp < min(nCols, nRows - 1)
+      U = rand(nRows, nRows) * 2 - 1;
+      Z = U * X;
+      Z = norm(Z);   
+      Epv = Z * (I - P * P');
+      Epv = norm(Epv, sqrt(sum(Epv.^2, 2)./qk));
+      Xpv = Xpv + Epv;
    end
-
+      
    % uscenter and unscale the data
    Xpv = bsxfun(@times, Xpv, sX);
    Xpv = bsxfun(@plus, Xpv, mX);
 end
 
-% Generates indexes for k-fold cross-validation
-% N - number of samples
-% fold - number of partitions (i.e. 3, 5, 10)
-%
-% Yury Zontov, 2019
-% https://github.com/yzontov
-%
-function [val_start, val_stop] = crossval_indexes(N, fold )
-
-            k = N;
-            if(mod(k, fold) == 0)
-                x = 1:k;
-                rows = k / fold;
-                y = reshape (x, [rows, fold]);
-                start = y(1,:);
-                stop = y(end,:);
-            else
-                rows = fix(k / fold);
-                x = 1:rows*fold;
-                y = reshape (x, [rows, fold]);
-                start = y(1,:);
-                stop = y(end,:);
-                
-                for i = 1:mod(k, fold)
-                    stop(i) = stop(i) + 1;
-                    start(i+1:end) = start(i+1:end) + 1;
-                    stop(i+1:end) = stop(i+1:end) + 1;
-                end
-            end
-            
-            val_start = start;
-            val_stop = stop;
-            
-end
-
-% Creates rotation matrix to map a set vectors
-%
-% Base1 - matrix (JxA) with A orthonormal vectors as columns to be rotated (A <= J)
-% Base2 - matrix (JxA) with A orthonormal vectors as columns, Base1 should be aligned with
-%
-% In both sets vectors should be orthonormal.
-%
-function R = getR(Base1, Base2)
-
-   R1 = rotationMatrixToX1(Base1(:, 1));
-   R2 = rotationMatrixToX1(Base2(:, 1));
-
-   if size(Base1, 2) == 1
-      R = R2' * R1;
-      return
-   end
-
-   % Compute bases rotated to match their first vectors to [1 0 0 ... 0]'
-   Base1R = R1 * Base1;
-   Base2R = R2 * Base2;
-
-   % Get bases of subspaces of dimension n-1 (forget x1)
-   Base1RS = Base1R(2:end, 2:end);
-   Base2RS = Base2R(2:end, 2:end);
-
-   % Recursevely compute rotation matrix to map subspaces
-   Rs = getR(Base1RS, Base2RS);
-
-   % Construct rotation matrix of the whole space (recall x1)
-   M = eye(size(Base1R, 1));
-   M(2:end, 2:end) = Rs;
-
-   R = R2' * (M * R1);
-end
-
-% Creates a rotation matrix to map a vector x to [1 0 0 ... 0]
-%
-% x - vector (sequence with J coordinates)
-%
-function R = rotationMatrixToX1(x)
-   N = numel(x);
-   R = eye(N);
-   step = 1;
-
-   while step < N
-      A = eye(N);
-      n = 1;
-      while n <= N - step
-         r2 = x(n)^2 + x(n + step)^2;
-         if r2 > 0
-            r = sqrt(r2);
-            pcos = x(n) / r;
-            psin = -x(n + step) / r;
-            A(n, n) = pcos;
-            A(n, n + step) = -psin;
-            A(n + step, n) = psin;
-            A(n + step, n + step) = pcos;
-         end
-         n = n + 2 * step;
-      end
-      step = 2 * step;
-      x = A * x;
-      R = A * R;
-   end
-end
-
-        
-   
